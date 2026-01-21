@@ -6,6 +6,9 @@
     <title>Pakoda | Obsidian AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
+      // Shim process.env for browser compatibility
+      window.process = { env: { API_KEY: "" } };
+      
       tailwind.config = {
         darkMode: 'class',
         theme: {
