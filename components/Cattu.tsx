@@ -10,45 +10,45 @@ interface CattuProps {
 
 const Cattu: React.FC<CattuProps> = ({ emotion, isTalking, isLoading, size = 'lg' }) => {
   const sizeClasses = { 
-    sm: 'w-10 h-10 lg:w-14 lg:h-14', 
-    md: 'w-32 h-32 lg:w-48 lg:h-48', 
-    lg: 'w-56 h-56 md:w-64 md:h-64 lg:w-80 lg:h-80' 
+    sm: 'w-14 h-14 lg:w-16 lg:h-16', 
+    md: 'w-40 h-40 lg:w-56 lg:h-56', 
+    lg: 'w-56 h-56 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-[380px] lg:h-[380px]' 
   };
 
   const containerClass = useMemo(() => {
     let base = `${sizeClasses[size]} transition-all duration-1000 relative overflow-visible origin-bottom `;
     
-    // Core Idle Animations - Prioritize emotion even during loading
+    // Base Animations
     if (isLoading && !isTalking && emotion === Emotion.NEUTRAL) {
       base += "animate-thinking-float ";
     } else {
       switch (emotion) {
-        case Emotion.ANNOYED: 
-          base += "animate-breath-annoyed grayscale-[0.2] opacity-80 "; 
-          break;
-        case Emotion.CONFIDENT: 
-          base += "animate-breath-confident "; 
-          break;
-        case Emotion.ANGRY: 
-          base += "animate-intense-shake brightness-[1.2] contrast-[1.1] "; 
-          break;
-        case Emotion.SAVAGE: 
-          base += "animate-chromatic-glitch scale-[1.01] "; 
-          break;
-        default: 
-          base += "animate-breath-neutral animate-sway-neutral "; 
-          break;
+        case Emotion.ANNOYED: base += "animate-breath-annoyed grayscale-[0.2] opacity-80 "; break;
+        case Emotion.CONFIDENT: base += "animate-breath-confident "; break;
+        case Emotion.ANGRY: base += "animate-intense-shake brightness-[1.2] contrast-[1.1] "; break;
+        case Emotion.SAVAGE: base += "animate-status-glitch scale-[1.01] "; break;
+        default: base += "animate-breath-neutral animate-sway-neutral "; break;
       }
     }
 
-    // Emotion-based Interactive Hover States
-    if (!isLoading && !isTalking && size !== 'sm') {
+    // Interactive Unique Hover Reactions (Only for larger sizes or desktop-like interactions)
+    if (!isLoading && !isTalking) {
       switch (emotion) {
-        case Emotion.ANGRY: base += "group-hover:animate-snap-angry group-hover:drop-shadow-[0_0_20px_rgba(255,0,0,0.4)] "; break;
-        case Emotion.CONFIDENT: base += "group-hover:animate-tilt-confident "; break;
-        case Emotion.ANNOYED: base += "group-hover:animate-flinch-annoyed "; break;
-        case Emotion.SAVAGE: base += "group-hover:animate-glitch-pop "; break;
-        default: base += "group-hover:scale-110 group-hover:-translate-y-4 group-hover:rotate-3 transition-transform duration-500 ease-out "; break;
+        case Emotion.ANGRY: 
+          base += "group-hover:animate-hover-angry group-hover:drop-shadow-[0_0_35px_rgba(255,0,0,0.6)] "; 
+          break;
+        case Emotion.CONFIDENT: 
+          base += "group-hover:animate-hover-confident group-hover:drop-shadow-[0_0_25px_rgba(255,255,0,0.2)] "; 
+          break;
+        case Emotion.ANNOYED: 
+          base += "group-hover:animate-hover-annoyed "; 
+          break;
+        case Emotion.SAVAGE: 
+          base += "group-hover:animate-hover-savage group-hover:drop-shadow-[0_0_20px_rgba(0,255,255,0.3)] "; 
+          break;
+        default: 
+          base += "group-hover:animate-hover-neutral "; 
+          break;
       }
     }
 
@@ -56,7 +56,6 @@ const Cattu: React.FC<CattuProps> = ({ emotion, isTalking, isLoading, size = 'lg
   }, [emotion, isLoading, isTalking, size]);
 
   const renderEyebrows = () => {
-    if (size === 'sm') return null;
     switch (emotion) {
       case Emotion.ANNOYED: return (
         <g className="transition-all duration-700 group-hover:translate-y-2">
@@ -134,17 +133,18 @@ const Cattu: React.FC<CattuProps> = ({ emotion, isTalking, isLoading, size = 'lg
   };
 
   return (
-    <div className={containerClass + " text-black dark:text-white group"}>
+    <div className={containerClass + " text-black dark:text-white group cursor-help"}>
       <svg viewBox="0 0 200 230" className="w-full h-full drop-shadow-2xl overflow-visible transition-all duration-700 ease-in-out">
-         {/* Spontaneous Tail Action */}
+         {/* Tail with Dynamic Speed */}
          <path d="M 160 170 Q 200 140, 190 180 Q 185 200, 175 190" fill="none" stroke="currentColor" strokeWidth="22" strokeLinecap="round" 
-               className={`${emotion === Emotion.ANGRY ? 'animate-tail-angry' : 'animate-tail-flick-spontaneous'} origin-right transition-transform`} />
+               className={`${emotion === Emotion.ANGRY ? 'animate-tail-angry' : 'animate-tail-flick-spontaneous'} group-hover:scale-x-125 origin-right transition-transform`} 
+               style={{ animationDuration: (emotion === Emotion.ANGRY || emotion === Emotion.SAVAGE) ? '0.2s' : '1.5s' }} />
          
-         {/* Spontaneous Ear Twitches */}
+         {/* Ears with Reactive Hover Positioning */}
          <path d="M 45 60 L 30 15 Q 55 0, 80 30 L 75 55" fill={emotion === Emotion.ANGRY ? '#1a0000' : 'currentColor'} stroke="currentColor" strokeWidth="12" 
-               className={`transition-all duration-700 animate-ear-twitch-spontaneous ${emotion === Emotion.ANGRY ? 'rotate-[-45deg] translate-x-[-20px]' : ''} group-hover:rotate-[-25deg] opacity-90`} />
+               className={`transition-all duration-700 animate-ear-twitch-spontaneous ${emotion === Emotion.ANGRY ? 'rotate-[-45deg] translate-x-[-20px]' : ''} group-hover:rotate-[-40deg] group-hover:-translate-y-4 opacity-90`} />
          <path d="M 120 55 L 130 15 Q 160 0, 170 60 L 155 65" fill={emotion === Emotion.ANGRY ? '#1a0000' : 'currentColor'} stroke="currentColor" strokeWidth="12" 
-               className={`transition-all duration-700 animate-ear-twitch-spontaneous ${emotion === Emotion.ANGRY ? 'rotate-[45deg] translate-x-[20px]' : ''} group-hover:rotate-[25deg] opacity-90`} style={{ animationDelay: '6s' }} />
+               className={`transition-all duration-700 animate-ear-twitch-spontaneous ${emotion === Emotion.ANGRY ? 'rotate-[45deg] translate-x-[20px]' : ''} group-hover:rotate-[40deg] group-hover:-translate-y-4 opacity-90`} style={{ animationDelay: '6s' }} />
          
          {/* Body */}
          <path 
