@@ -1,0 +1,7 @@
+{
+  "name": "Pakoda - Savage AI",
+  "description": "A savage, roasting AI persona named Pakoda who judges you constantly.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
