@@ -17,11 +17,14 @@ export const sendMessageToGemini = async (
       history: history,
     });
 
-    const result = await chat.sendMessage({ message });
+    // Simple timeout wrap for better UX
+    const responsePromise = chat.sendMessage({ message });
+    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 15000));
+    
+    const result: any = await Promise.race([responsePromise, timeoutPromise]);
     const responseText = result.text || "";
 
     // Parse Emotion Tag
-    // Regex to find [TAG] at the start
     const tagRegex = /^\[(NEUTRAL|ANNOYED|CONFIDENT|SAVAGE|ANGRY)\]\s*/i;
     const match = responseText.match(tagRegex);
 
@@ -44,7 +47,7 @@ export const sendMessageToGemini = async (
   } catch (error) {
     console.error("Gemini API Error:", error);
     return {
-      text: "My brain cells are refusing to process that level of stupidity right now. Try again.",
+      text: "Abey, server slow hai ya tera internet tatti? Wait kar thoda.",
       emotion: Emotion.ANNOYED,
     };
   }
@@ -54,19 +57,22 @@ export const generateSpeech = async (text: string, emotion: Emotion): Promise<st
   try {
     const prompt = `Speak this in a ${emotion.toLowerCase()}, sharp, confident, and slightly mocking human tone: ${text}`;
     
-    const response = await ai.models.generateContent({
+    const responsePromise = ai.models.generateContent({
       model: "gemini-2.5-flash-preview-tts",
       contents: [{ parts: [{ text: prompt }] }],
       config: {
         responseModalities: [Modality.AUDIO],
         speechConfig: {
           voiceConfig: {
-            // 'Puck' has a sardonic/sharp quality that fits Pakoda
             prebuiltVoiceConfig: { voiceName: 'Puck' },
           },
         },
       },
     });
+
+    // Timeout TTS after 10s so we don't hold up the UI forever
+    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("TTS Timeout")), 10000));
+    const response: any = await Promise.race([responsePromise, timeoutPromise]);
 
     return response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
   } catch (error) {

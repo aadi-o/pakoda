@@ -85,6 +85,25 @@
       }
       html.dark .noise { opacity: 0.05; }
 
+      /* Initial Loading State Styles */
+      #root:empty {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background: #000;
+      }
+      #root:empty::after {
+        content: "";
+        width: 40px;
+        height: 40px;
+        border: 2px solid rgba(255,255,255,0.1);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+
       @keyframes slide-up {
         from { transform: translateY(20px); opacity: 0; }
         to { transform: translateY(0); opacity: 1; }
