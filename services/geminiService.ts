@@ -2,12 +2,8 @@ import { GoogleGenAI, Modality } from "@google/genai";
 import { SYSTEM_INSTRUCTION } from "../constants";
 import { Emotion, GeminiResponse } from "../types";
 
-// Helper to get AI instance safely
 const getAI = () => {
   const key = process.env.API_KEY;
-  if (!key) {
-    console.warn("API_KEY missing in process.env");
-  }
   return new GoogleGenAI({ apiKey: key || "" });
 };
 
@@ -17,20 +13,18 @@ export const sendMessageToGemini = async (
 ): Promise<GeminiResponse> => {
   try {
     const ai = getAI();
-    const chat = ai.chats.create({
-      model: 'gemini-3-flash-preview',
+    // Using gemini-3-pro-preview for sharper, more complex roasts as requested
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-pro-preview',
+      contents: [...history.map(h => ({ role: h.role, parts: h.parts })), { role: 'user', parts: [{ text: message }] }],
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
+        temperature: 0.9, // Higher temperature for more creative insults
+        topP: 0.95,
       },
-      history: history,
     });
 
-    const responsePromise = chat.sendMessage({ message });
-    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 15000));
-    
-    const result: any = await Promise.race([responsePromise, timeoutPromise]);
-    const responseText = result.text || "";
-
+    const responseText = response.text || "";
     const tagRegex = /^\[(NEUTRAL|ANNOYED|CONFIDENT|SAVAGE|ANGRY)\]\s*/i;
     const match = responseText.match(tagRegex);
 
@@ -53,8 +47,8 @@ export const sendMessageToGemini = async (
   } catch (error) {
     console.error("Gemini API Error:", error);
     return {
-      text: "Abey, logic check kar le. API key setup ki hai ya bas hawa mein host kar diya?",
-      emotion: Emotion.ANNOYED,
+      text: "Abey system hang ho gaya tera kachra input dekh ke. Restart kar aur dhang ka sawal pooch.",
+      emotion: Emotion.ANGRY,
     };
   }
 };
@@ -62,9 +56,9 @@ export const sendMessageToGemini = async (
 export const generateSpeech = async (text: string, emotion: Emotion): Promise<string | undefined> => {
   try {
     const ai = getAI();
-    const prompt = `Speak this in a ${emotion.toLowerCase()}, sharp, confident, and slightly mocking human tone: ${text}`;
+    const prompt = `Speak this in a ${emotion.toLowerCase()}, sharp, human tone. Be extremely sarcastic and quick: ${text}`;
     
-    const responsePromise = ai.models.generateContent({
+    const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-preview-tts",
       contents: [{ parts: [{ text: prompt }] }],
       config: {
@@ -77,12 +71,8 @@ export const generateSpeech = async (text: string, emotion: Emotion): Promise<st
       },
     });
 
-    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("TTS Timeout")), 10000));
-    const response: any = await Promise.race([responsePromise, timeoutPromise]);
-
     return response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
   } catch (error) {
-    console.error("TTS Generation Error:", error);
     return undefined;
   }
 };
