@@ -13,14 +13,16 @@ export const sendMessageToGemini = async (
 ): Promise<GeminiResponse> => {
   try {
     const ai = getAI();
-    // Using gemini-3-pro-preview for sharper, more complex roasts as requested
+    // Switched to gemini-3-flash-preview for maximum speed and lower latency
     const response = await ai.models.generateContent({
-      model: 'gemini-3-pro-preview',
+      model: 'gemini-3-flash-preview',
       contents: [...history.map(h => ({ role: h.role, parts: h.parts })), { role: 'user', parts: [{ text: message }] }],
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
-        temperature: 0.9, // Higher temperature for more creative insults
+        temperature: 0.9,
         topP: 0.95,
+        // Disable thinking to ensure the fastest possible response time
+        thinkingConfig: { thinkingBudget: 0 }
       },
     });
 
