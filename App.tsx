@@ -30,6 +30,40 @@ async function decodeAudioData(data: Uint8Array, ctx: AudioContext, sampleRate: 
   return buffer;
 }
 
+// Icon Components
+const SunIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 9H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+  </svg>
+);
+
+const MoonIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+  </svg>
+);
+
+const VolumeIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+  </svg>
+);
+
+const VolumeMuteIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 9l4 4m0-4l-4 4" />
+  </svg>
+);
+
+const InstagramIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <rect x="2" y="2" width="20" height="20" rx="5" strokeWidth="2" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" />
+    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" strokeWidth="2" strokeLinecap="round" />
+  </svg>
+);
+
 const TypingIndicator: React.FC<{ emotion: Emotion }> = ({ emotion }) => {
   const [displayedText, setDisplayedText] = useState('');
   
@@ -228,8 +262,8 @@ const App: React.FC = () => {
                     <Cattu size="sm" emotion={currentEmotion} isTalking={isSpeaking} isLoading={loading} />
                   </div>
                   <div>
-                    <h1 className="text-lg sm:text-2xl font-black tracking-tighter uppercase">PAKODA</h1>
-                    <div className="flex items-center gap-1.5 opacity-30 mt-0.5">
+                    <h1 className="text-lg sm:text-2xl font-black tracking-tighter uppercase leading-none">PAKODA</h1>
+                    <div className="flex items-center gap-1.5 opacity-30 mt-1.5">
                       <div className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
                       <span className="text-[9px] font-mono uppercase tracking-widest">Core Active</span>
                     </div>
@@ -238,12 +272,29 @@ const App: React.FC = () => {
               
               <div className="flex lg:flex-col gap-2 w-auto lg:w-full">
                   <div className="flex gap-2">
-                    <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="p-2.5 sm:p-3 rounded-xl border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition-all">
-                      {theme === 'dark' ? '☀️' : '🌙'}
+                    <button 
+                      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} 
+                      className="p-3 rounded-xl border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition-all text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white"
+                      title="Switch Theme"
+                    >
+                      {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
                     </button>
-                    <button onClick={() => setVoiceEnabled(!voiceEnabled)} className={`p-2.5 sm:p-3 rounded-xl border transition-all ${voiceEnabled ? 'bg-black dark:bg-white text-white dark:text-black' : 'opacity-30 border-black/10'}`}>
-                      {voiceEnabled ? '🔊' : '🔇'}
+                    <button 
+                      onClick={() => setVoiceEnabled(!voiceEnabled)} 
+                      className={`p-3 rounded-xl border transition-all ${voiceEnabled ? 'bg-black dark:bg-white text-white dark:text-black border-transparent shadow-lg' : 'opacity-30 border-black/10 text-black dark:text-white'}`}
+                      title={voiceEnabled ? "Mute Voice" : "Unmute Voice"}
+                    >
+                      {voiceEnabled ? <VolumeIcon /> : <VolumeMuteIcon />}
                     </button>
+                    <a 
+                      href="https://instagram.com/aadi.nq" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="p-3 rounded-xl border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition-all text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white flex items-center justify-center"
+                      title="Follow on Instagram"
+                    >
+                      <InstagramIcon />
+                    </a>
                   </div>
                   <button onClick={purgeMemory} className="hidden lg:flex items-center justify-center p-3 rounded-xl border border-red-500/20 bg-red-500/5 text-red-500 hover:bg-red-500/10 transition-all text-[10px] font-black uppercase tracking-widest mt-4">
                     Clear Logic
