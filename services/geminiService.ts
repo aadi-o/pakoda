@@ -50,7 +50,7 @@ export const sendMessageToGemini = async (
   } catch (error) {
     console.error("Gemini API Error:", error);
     return {
-      text: "Abey gandu, mera dimaag kharab mat kar. System hang ho gaya tera kachra dekh ke. Refresh kar aur nikal.",
+      text: "Abey nalle, mera dimaag mat kha. System crash ho gaya tera logic dekh ke. Refresh kar aur nikal yahan se.",
       emotion: Emotion.ANGRY,
     };
   }
