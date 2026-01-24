@@ -1,11 +1,12 @@
 
+// Refined GoogleGenAI initialization to strictly follow the guidelines using process.env.API_KEY directly and using the .text property for content extraction.
 import { GoogleGenAI, Modality } from "@google/genai";
 import { SYSTEM_INSTRUCTION } from "../constants";
 import { Emotion, GeminiResponse } from "../types";
 
 const getAI = () => {
-  const key = process.env.API_KEY;
-  return new GoogleGenAI({ apiKey: key || "" });
+  // Always use a named parameter and process.env.API_KEY directly.
+  return new GoogleGenAI({ apiKey: process.env.API_KEY });
 };
 
 export const sendMessageToGemini = async (
@@ -27,6 +28,7 @@ export const sendMessageToGemini = async (
       },
     });
 
+    // Directly access the .text property as per guidelines (it is not a method).
     const responseText = response.text || "";
     const tagRegex = /^\[(NEUTRAL|ANNOYED|CONFIDENT|SAVAGE|ANGRY)\]\s*/i;
     const match = responseText.match(tagRegex);
@@ -59,7 +61,7 @@ export const sendMessageToGemini = async (
 export const generateSpeech = async (text: string, emotion: Emotion): Promise<string | undefined> => {
   try {
     const ai = getAI();
-    // Prompt for TTS needs to be fast and human-like too
+    // Prompt for TTS needs to be fast and human-like
     const prompt = `Speak this like a fast-talking, aggressive human. No robotic pauses. Pure attitude: ${text}`;
     
     const response = await ai.models.generateContent({
