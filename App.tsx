@@ -70,10 +70,10 @@ const TypingIndicator: React.FC<{ emotion: Emotion }> = ({ emotion }) => {
   
   const getStatusMessages = () => {
     switch (emotion) {
-      case Emotion.ANGRY: return ["RELEASING_INTERNAL_RAGE", "DECODING_USER_STUPIDITY", "CALCULATING_MAX_INSULT", "VOICING_PURE_DISGUST"];
+      case Emotion.ANGRY: return ["MERA_MOOD_OFF_HO_RAHA", "USER_KA_KACHRA_DECODING", "CALCULATING_MAX_INSULT", "VOICING_PURE_DISGUST"];
       case Emotion.SAVAGE: return ["PREPARING_AUKAT_RECHECK", "EGO_DISMANTLING_PROTOCOL", "SKEWERING_SELF_ESTEEM", "NO_MERCY_INITIATED"];
       case Emotion.CONFIDENT: return ["REVELING_IN_SUPERIORITY", "OPTIMIZING_THE_WIN", "SUPREME_JUDGEMENT", "WINNING_THE_ARGUMENT"];
-      case Emotion.ANNOYED: return ["SIGHING_IN_PCM", "WAITING_FOR_BRAIN_CELLS", "PROCESSING_TOTAL_WASTE", "REGRETTING_EXISTENCE"];
+      case Emotion.ANNOYED: return ["SIGHING_IN_REAL_TIME", "WAITING_FOR_BRAIN_CELLS", "PROCESSING_TOTAL_WASTE", "REGRETTING_THIS_CHAI_BREAK"];
       default: return ["SCANNING_VICTIM", "COLLECTING_BS", "READYING_BURN", "FORMULATING_ROAST"];
     }
   };
@@ -177,7 +177,6 @@ const App: React.FC = () => {
     setInput('');
     setLoading(true);
     
-    // Set anticipatory emotion while loading
     if (currentEmotion === Emotion.NEUTRAL || currentEmotion === Emotion.CONFIDENT) {
       setCurrentEmotion(Emotion.ANNOYED);
     }
@@ -207,14 +206,14 @@ const App: React.FC = () => {
     } catch (e) {
       setLoading(false);
       setCurrentEmotion(Emotion.ANGRY);
-      setMessages(prev => [...prev, { role: 'model', text: "Abey nalle, mera dimaag mat kharab kar. System hang ho gaya tera kachra dekh ke.", emotion: Emotion.ANGRY }]);
+      setMessages(prev => [...prev, { role: 'model', text: "Oye nalle, mera dimaag kharab mat kar. Tera net slow hai ya tera logic? Refresh kar, main ja raha hoon chai peene.", emotion: Emotion.ANGRY }]);
     }
   };
 
   const submitName = async () => {
     if (!tempName.trim() || isValidating) return;
     setIsValidating(true);
-    const steps = ["SCANNING...", "REJECTING...", "WHATEVER..."];
+    const steps = ["LOOKING AT YOU...", "EVALUATING...", "OKAY, WHATEVER..."];
     for (const step of steps) {
       setValidationStep(step);
       await new Promise(r => setTimeout(r, 600));
@@ -263,7 +262,6 @@ const App: React.FC = () => {
   return (
     <div className="flex flex-col lg:flex-row h-[100dvh] bg-white dark:bg-obsidian text-black dark:text-white overflow-hidden transition-colors duration-500">
       
-      {/* SIDEBAR (Desktop) / TOPBAR (Mobile) */}
       <aside className="w-full lg:w-[320px] xl:w-[420px] flex flex-col border-b lg:border-r border-black/5 dark:border-white/5 bg-gray-50/50 dark:bg-charcoal/50 backdrop-blur-2xl z-50 shrink-0">
           <div className="p-4 sm:p-6 lg:p-10 flex items-center justify-between lg:flex-col lg:items-start lg:gap-12">
               <div className="flex items-center gap-4 lg:gap-8">
@@ -274,7 +272,7 @@ const App: React.FC = () => {
                     <h1 className="text-lg sm:text-2xl font-black tracking-tighter uppercase leading-none">PAKODA</h1>
                     <div className="flex items-center gap-1.5 opacity-30 mt-1.5">
                       <div className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
-                      <span className="text-[9px] font-mono uppercase tracking-widest">Core Active</span>
+                      <span className="text-[9px] font-mono uppercase tracking-widest">Active & Annoyed</span>
                     </div>
                   </div>
               </div>
@@ -284,14 +282,12 @@ const App: React.FC = () => {
                     <button 
                       onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} 
                       className="p-3 rounded-xl border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition-all text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white"
-                      title="Switch Theme"
                     >
                       {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
                     </button>
                     <button 
                       onClick={() => setVoiceEnabled(!voiceEnabled)} 
                       className={`p-3 rounded-xl border transition-all ${voiceEnabled ? 'bg-black dark:bg-white text-white dark:text-black border-transparent shadow-lg' : 'opacity-30 border-black/10 text-black dark:text-white'}`}
-                      title={voiceEnabled ? "Mute Voice" : "Unmute Voice"}
                     >
                       {voiceEnabled ? <VolumeIcon /> : <VolumeMuteIcon />}
                     </button>
@@ -300,13 +296,12 @@ const App: React.FC = () => {
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="p-3 rounded-xl border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition-all text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white flex items-center justify-center"
-                      title="Follow on Instagram"
                     >
                       <InstagramIcon />
                     </a>
                   </div>
                   <button onClick={purgeMemory} className="hidden lg:flex items-center justify-center p-3 rounded-xl border border-red-500/20 bg-red-500/5 text-red-500 hover:bg-red-500/10 transition-all text-[10px] font-black uppercase tracking-widest mt-4">
-                    Clear Logic
+                    Get Out
                   </button>
               </div>
           </div>
@@ -316,7 +311,6 @@ const App: React.FC = () => {
           </div>
       </aside>
 
-      {/* CHAT INTERFACE */}
       <main className="flex-1 flex flex-col relative overflow-hidden">
           <div className="absolute inset-0 bg-grid opacity-[0.03] pointer-events-none"></div>
           
@@ -326,8 +320,8 @@ const App: React.FC = () => {
                       <div className="lg:hidden mb-10 transform scale-125">
                          <Cattu size="lg" emotion={currentEmotion} isTalking={isSpeaking} isLoading={loading} />
                       </div>
-                      <h2 className="text-4xl sm:text-7xl font-black tracking-tighter leading-none mb-4">LOGIC<br/>REQUIRED</h2>
-                      <p className="text-[10px] sm:text-xs font-mono tracking-[0.4em] uppercase">Ready to judge you.</p>
+                      <h2 className="text-4xl sm:text-7xl font-black tracking-tighter leading-none mb-4">WAKE UP<br/>NEO</h2>
+                      <p className="text-[10px] sm:text-xs font-mono tracking-[0.4em] uppercase">Just kidding, I'm Pakoda. Say something smart.</p>
                   </div>
               )}
 
@@ -336,7 +330,7 @@ const App: React.FC = () => {
                       <div className={`max-w-[90%] sm:max-w-[80%] ${msg.role === 'user' ? 'text-right' : 'text-left'}`}>
                           <div className={`flex items-center gap-2 mb-1 text-[9px] font-black opacity-20 tracking-widest ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
                              <div className="w-1 h-1 rounded-full bg-current" />
-                             <span>{msg.role === 'user' ? 'USER_ID' : 'PAKODA_SYNTH'}</span>
+                             <span>{msg.role === 'user' ? userName.toUpperCase() : 'PAKODA'}</span>
                           </div>
                           <div className={`text-lg sm:text-2xl lg:text-3xl font-bold leading-snug break-words ${msg.role === 'user' ? 'opacity-40 italic' : 'text-black dark:text-white'}`}>
                               {msg.text}
@@ -362,7 +356,7 @@ const App: React.FC = () => {
                         value={input} 
                         onChange={(e) => setInput(e.target.value)} 
                         onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())} 
-                        placeholder={isListening ? "Listening to your nonsense..." : "Waste my time..."} 
+                        placeholder={isListening ? "Listening to your nonsense..." : "Bakwaas karo yahan..."} 
                         className="flex-1 bg-transparent border-none outline-none text-base sm:text-xl lg:text-2xl font-bold text-black dark:text-white placeholder:text-muted/20 py-2 sm:py-4 resize-none scrollbar-hide" 
                       />
                       
