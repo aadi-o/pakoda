@@ -45,7 +45,6 @@ const Cattu: React.FC<CattuProps> = ({ emotion, isTalking, isLoading, size = 'lg
       }
 
       if (selectedAction === 'eye-glance') {
-        // Randomize the glance destination
         const mult = emotion === Emotion.ANNOYED ? 1.5 : 1.0;
         setGlancePos({
           x: (Math.random() - 0.5) * 15 * mult,
@@ -55,11 +54,9 @@ const Cattu: React.FC<CattuProps> = ({ emotion, isTalking, isLoading, size = 'lg
 
       setActiveAction(selectedAction);
 
-      // Reset action after its short CSS animation completes
       const duration = selectedAction === 'blink' ? 150 : 800;
       setTimeout(() => setActiveAction('none'), duration);
 
-      // Schedule next action with emotional influence on pacing
       const baseDelay = emotion === Emotion.ANGRY ? 500 : emotion === Emotion.ANNOYED ? 3000 : 1500;
       const randomDelay = Math.random() * (emotion === Emotion.ANGRY ? 800 : 4000);
       
@@ -78,37 +75,37 @@ const Cattu: React.FC<CattuProps> = ({ emotion, isTalking, isLoading, size = 'lg
     lg: 'w-72 h-72 sm:w-96 sm:h-96 md:w-[450px] md:h-[450px] lg:w-[380px] lg:h-[380px]' 
   };
 
-  const containerClass = useMemo(() => {
-    let base = `${sizeClasses[size]} transition-all duration-700 relative overflow-visible origin-bottom group cursor-help `;
-    
-    if (isLoading && !isTalking && emotion === Emotion.NEUTRAL) {
-      base += "animate-thinking-float ";
-    } else if (!isHovered) {
-      switch (emotion) {
-        case Emotion.ANNOYED: base += "animate-breath-annoyed grayscale-[0.2] scale-[0.98] "; break;
-        case Emotion.CONFIDENT: base += "animate-breath-confident "; break;
-        case Emotion.ANGRY: base += "animate-jitter brightness-[1.1] "; break;
-        case Emotion.SAVAGE: base += "animate-float-savage "; break;
-        default: base += "animate-breath-neutral animate-sway-neutral "; break;
-      }
-    }
-
-    if (isTalking && emotion === Emotion.ANGRY) {
-        base += "animate-explosive-vibration ";
-    }
-
+  const emotionClass = useMemo(() => {
+    let classes = "";
     if (isHovered) {
       switch (emotion) {
-        case Emotion.NEUTRAL: base += "animate-hover-react-neutral "; break;
-        case Emotion.ANNOYED: base += "animate-hover-react-annoyed "; break;
-        case Emotion.CONFIDENT: base += "animate-hover-react-confident "; break;
-        case Emotion.SAVAGE: base += "animate-hover-react-savage "; break;
-        case Emotion.ANGRY: base += "animate-hover-react-angry "; break;
+        case Emotion.NEUTRAL: classes += "animate-hover-react-neutral "; break;
+        case Emotion.ANNOYED: classes += "animate-hover-react-annoyed "; break;
+        case Emotion.CONFIDENT: classes += "animate-hover-react-confident "; break;
+        case Emotion.SAVAGE: classes += "animate-hover-react-savage "; break;
+        case Emotion.ANGRY: classes += "animate-hover-react-angry "; break;
+      }
+    } else {
+      switch (emotion) {
+        case Emotion.ANNOYED: classes += "animate-breath-annoyed grayscale-[0.2] scale-[0.98] "; break;
+        case Emotion.CONFIDENT: classes += "animate-breath-confident "; break;
+        case Emotion.ANGRY: classes += "animate-jitter brightness-[1.1] "; break;
+        case Emotion.SAVAGE: classes += "animate-float-savage "; break;
+        default: classes += "animate-breath-neutral animate-sway-neutral "; break;
       }
     }
+    return classes;
+  }, [emotion, isHovered]);
 
-    return base;
-  }, [emotion, isLoading, isTalking, size, isHovered]);
+  const stateClass = useMemo(() => {
+    let classes = "transition-all duration-300 ";
+    if (isLoading) classes += "opacity-80 saturate-[1.5] brightness-[1.1] ";
+    if (isTalking) {
+      if (emotion === Emotion.ANGRY) classes += "animate-explosive-vibration ";
+      else classes += "scale-[1.05] ";
+    }
+    return classes;
+  }, [isLoading, isTalking, emotion]);
 
   const renderEyebrows = () => {
     let pathClass = "transition-all duration-500 ";
@@ -149,13 +146,6 @@ const Cattu: React.FC<CattuProps> = ({ emotion, isTalking, isLoading, size = 'lg
   };
 
   const renderEyes = () => {
-    if (isLoading && !isTalking && emotion === Emotion.NEUTRAL) return (
-      <g className="animate-pulse opacity-20">
-        <rect x="55" y="118" width="25" height="4" rx="2" fill="currentColor" />
-        <rect x="120" y="118" width="25" height="4" rx="2" fill="currentColor" />
-      </g>
-    );
-
     if (activeAction === 'blink' && !isTalking && emotion !== Emotion.ANGRY) return (
       <g className="transition-all duration-75">
         <path d="M 50 120 L 80 120" stroke="currentColor" strokeWidth="10" strokeLinecap="round" />
@@ -215,56 +205,58 @@ const Cattu: React.FC<CattuProps> = ({ emotion, isTalking, isLoading, size = 'lg
 
   return (
     <div 
-      className={containerClass + " text-black dark:text-white"}
+      className={`${sizeClasses[size]} flex items-center justify-center relative overflow-visible origin-bottom group cursor-help text-black dark:text-white`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <svg viewBox="0 0 200 230" className="w-full h-full drop-shadow-[0_25px_50px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_25px_50px_rgba(255,255,255,0.05)] overflow-visible transition-all duration-500 ease-in-out">
-         {/* Tail Group with JS-triggered flick */}
-         <g className={`${emotion === Emotion.ANGRY ? 'animate-jitter' : activeAction === 'tail-flick' ? 'animate-tail-flick-once' : ''} origin-right`}>
-            <path d="M 160 170 Q 210 130, 195 185 Q 188 210, 175 190" fill="none" stroke="currentColor" strokeWidth="20" strokeLinecap="round" 
-                  className="transition-all duration-700" 
-                  style={{ filter: emotion === Emotion.SAVAGE ? 'url(#glitch)' : 'none' }} />
-         </g>
-         
-         {/* Ears Group with JS-triggered twitch */}
-         <g className={`${activeAction === 'ear-twitch' ? 'animate-ear-twitch-once' : ''} origin-bottom`}>
-           <path d="M 45 60 L 25 10 Q 55 -5, 80 30 L 75 55" fill={emotion === Emotion.ANGRY ? '#200' : 'currentColor'} stroke="currentColor" strokeWidth="12" 
-                 className={`transition-all duration-500 ${emotion === Emotion.ANNOYED ? 'rotate-[-25deg] opacity-70' : ''}`} />
-           <path d="M 120 55 L 135 10 Q 165 -5, 175 60 L 155 65" fill={emotion === Emotion.ANGRY ? '#200' : 'currentColor'} stroke="currentColor" strokeWidth="12" 
-                 className={`transition-all duration-500 ${emotion === Emotion.ANNOYED ? 'rotate-[25deg] opacity-70' : ''}`} />
-         </g>
-         
-         <path 
-            d="M 45 60 Q 100 40, 155 60 Q 185 75, 185 125 L 185 175 Q 190 190, 175 200 Q 165 210, 160 195 L 160 215 Q 160 225, 140 225 L 125 225 Q 110 225, 110 210 L 90 210 Q 90 225, 70 225 L 55 225 Q 35 225, 35 210 L 35 190 Q 30 205, 15 195 Q 5 185, 15 170 L 15 120 Q 15 70, 45 60 Z" 
-            stroke="currentColor" 
-            strokeWidth="14" 
-            className={`transition-all duration-1000 ${emotion === Emotion.ANGRY ? 'fill-red-950/40' : 'fill-white dark:fill-charcoal/90'}`} 
-         />
-         
-         {renderEyebrows()}
-         {renderEyes()}
-         {renderMouth()}
+      <div className={`w-full h-full flex items-center justify-center transition-all duration-700 ${emotionClass}`}>
+        <div className={`w-full h-full flex items-center justify-center ${stateClass}`}>
+          <svg viewBox="0 0 200 230" className="w-full h-full drop-shadow-[0_25px_50px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_25px_50px_rgba(255,255,255,0.05)] overflow-visible transition-all duration-500 ease-in-out">
+             <g className={`${emotion === Emotion.ANGRY ? 'animate-jitter' : activeAction === 'tail-flick' ? 'animate-tail-flick-once' : ''} origin-right`}>
+                <path d="M 160 170 Q 210 130, 195 185 Q 188 210, 175 190" fill="none" stroke="currentColor" strokeWidth="20" strokeLinecap="round" 
+                      className="transition-all duration-700" 
+                      style={{ filter: emotion === Emotion.SAVAGE ? 'url(#glitch)' : 'none' }} />
+             </g>
+             
+             <g className={`${activeAction === 'ear-twitch' ? 'animate-ear-twitch-once' : ''} origin-bottom`}>
+               <path d="M 45 60 L 25 10 Q 55 -5, 80 30 L 75 55" fill={emotion === Emotion.ANGRY ? '#200' : 'currentColor'} stroke="currentColor" strokeWidth="12" 
+                     className={`transition-all duration-500 ${emotion === Emotion.ANNOYED ? 'rotate-[-25deg] opacity-70' : ''}`} />
+               <path d="M 120 55 L 135 10 Q 165 -5, 175 60 L 155 65" fill={emotion === Emotion.ANGRY ? '#200' : 'currentColor'} stroke="currentColor" strokeWidth="12" 
+                     className={`transition-all duration-500 ${emotion === Emotion.ANNOYED ? 'rotate-[25deg] opacity-70' : ''}`} />
+             </g>
+             
+             <path 
+                d="M 45 60 Q 100 40, 155 60 Q 185 75, 185 125 L 185 175 Q 190 190, 175 200 Q 165 210, 160 195 L 160 215 Q 160 225, 140 225 L 125 225 Q 110 225, 110 210 L 90 210 Q 90 225, 70 225 L 55 225 Q 35 225, 35 210 L 35 190 Q 30 205, 15 195 Q 5 185, 15 170 L 15 120 Q 15 70, 45 60 Z" 
+                stroke="currentColor" 
+                strokeWidth="14" 
+                className={`transition-all duration-1000 ${emotion === Emotion.ANGRY ? 'fill-red-950/40' : 'fill-white dark:fill-charcoal/90'}`} 
+             />
+             
+             {renderEyebrows()}
+             {renderEyes()}
+             {renderMouth()}
 
-         <path d="M 100 166 Q 95 160, 100 154 Q 105 160, 100 166" fill={emotion === Emotion.ANGRY ? '#ff0000' : 'currentColor'} className="transition-all duration-300 origin-center" />
-      
-         <g className="opacity-10 dark:opacity-20 pointer-events-none">
-            <line x1="40" y1="150" x2="10" y2="145" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            <line x1="40" y1="160" x2="5" y2="160" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            <line x1="160" y1="150" x2="190" y2="145" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            <line x1="160" y1="160" x2="195" y2="160" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-         </g>
+             <path d="M 100 166 Q 95 160, 100 154 Q 105 160, 100 166" fill={emotion === Emotion.ANGRY ? '#ff0000' : 'currentColor'} className="transition-all duration-300 origin-center" />
+          
+             <g className="opacity-10 dark:opacity-20 pointer-events-none">
+                <line x1="40" y1="150" x2="10" y2="145" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <line x1="40" y1="160" x2="5" y2="160" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <line x1="160" y1="150" x2="190" y2="145" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <line x1="160" y1="160" x2="195" y2="160" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+             </g>
 
-         <defs>
-            <filter id="glitch">
-               <feOffset in="SourceGraphic" dx="-2" dy="0" result="off1" />
-               <feOffset in="SourceGraphic" dx="2" dy="0" result="off2" />
-               <feColorMatrix in="off1" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="red" />
-               <feColorMatrix in="off2" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="blue" />
-               <feBlend in="red" in2="blue" mode="screen" />
-            </filter>
-         </defs>
-      </svg>
+             <defs>
+                <filter id="glitch">
+                   <feOffset in="SourceGraphic" dx="-2" dy="0" result="off1" />
+                   <feOffset in="SourceGraphic" dx="2" dy="0" result="off2" />
+                   <feColorMatrix in="off1" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="red" />
+                   <feColorMatrix in="off2" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="blue" />
+                   <feBlend in="red" in2="blue" mode="screen" />
+                </filter>
+             </defs>
+          </svg>
+        </div>
+      </div>
       
       <div className={`absolute inset-0 -z-10 blur-[100px] sm:blur-[140px] rounded-full scale-[1.5] transition-all duration-1000 
         ${emotion === Emotion.ANGRY ? 'bg-red-500/30' : 

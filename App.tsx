@@ -69,11 +69,11 @@ const TypingIndicator: React.FC<{ emotion: Emotion }> = ({ emotion }) => {
   
   const getStatusMessages = () => {
     switch (emotion) {
-      case Emotion.ANGRY: return ["SYSTEM_OVERHEAT", "FATAL_ERROR", "REBOOTING_LOGIC"];
-      case Emotion.SAVAGE: return ["BYPASSING_FILTERS", "AUKAT_REVEAL", "DAMAGING_EGO"];
-      case Emotion.CONFIDENT: return ["SYNTHESIZING_LOGIC", "JUDGING_HUMAN", "OPTIMIZING"];
-      case Emotion.ANNOYED: return ["SIGH_INITIATED", "LOW_IQ_DETECTED", "WAITING"];
-      default: return ["FORMULATING_ROAST", "ANALYZING_BS", "SCANNING"];
+      case Emotion.ANGRY: return ["RELEASING_INTERNAL_RAGE", "DECODING_USER_STUPIDITY", "CALCULATING_MAX_INSULT", "VOICING_PURE_DISGUST"];
+      case Emotion.SAVAGE: return ["PREPARING_AUKAT_RECHECK", "EGO_DISMANTLING_PROTOCOL", "SKEWERING_SELF_ESTEEM", "NO_MERCY_INITIATED"];
+      case Emotion.CONFIDENT: return ["REVELING_IN_SUPERIORITY", "OPTIMIZING_THE_WIN", "SUPREME_JUDGEMENT", "WINNING_THE_ARGUMENT"];
+      case Emotion.ANNOYED: return ["SIGHING_IN_PCM", "WAITING_FOR_BRAIN_CELLS", "PROCESSING_TOTAL_WASTE", "REGRETTING_EXISTENCE"];
+      default: return ["SCANNING_VICTIM", "COLLECTING_BS", "READYING_BURN", "FORMULATING_ROAST"];
     }
   };
 
@@ -92,8 +92,10 @@ const TypingIndicator: React.FC<{ emotion: Emotion }> = ({ emotion }) => {
   }, [emotion]);
 
   const styles = {
-    ANGRY: 'bg-red-500/10 border-red-500/30 text-red-500',
-    SAVAGE: 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400',
+    ANGRY: 'bg-red-600/20 border-red-500 text-red-500 animate-shake-hard shadow-[0_0_25px_rgba(220,38,38,0.5)] border-2',
+    SAVAGE: 'bg-cyan-500/20 border-cyan-400 text-cyan-400 animate-glitch-savage border-2',
+    CONFIDENT: 'bg-yellow-400/10 border-yellow-400/50 text-yellow-500 animate-glow-pulse-confident border-2',
+    ANNOYED: 'bg-gray-200 dark:bg-zinc-800/40 border-zinc-700 text-zinc-500 animate-fade-annoyed border-2',
     NEUTRAL: 'bg-gray-100 dark:bg-charcoal border-black/5 dark:border-white/5 opacity-50'
   };
 
@@ -101,13 +103,13 @@ const TypingIndicator: React.FC<{ emotion: Emotion }> = ({ emotion }) => {
 
   return (
     <div className="flex flex-col gap-2 animate-slide-up py-4">
-      <div className={`flex items-center gap-3 px-4 py-2.5 rounded-full border backdrop-blur-3xl transition-all duration-300 ${currentStyle}`}>
-        <div className="flex gap-1">
+      <div className={`flex items-center gap-4 px-8 py-4 rounded-full border backdrop-blur-3xl transition-all duration-300 ${currentStyle}`}>
+        <div className="flex gap-2">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="w-1 h-1 rounded-full bg-current animate-bounce" style={{ animationDelay: `${i * 0.1}s` }} />
+            <div key={i} className="w-2 h-2 rounded-full bg-current animate-bounce" style={{ animationDelay: `${i * 0.1}s` }} />
           ))}
         </div>
-        <span className="text-[10px] font-black tracking-[0.2em] uppercase font-mono">{displayedText}</span>
+        <span className="text-[12px] font-black tracking-[0.3em] uppercase font-mono">{displayedText}</span>
       </div>
     </div>
   );
@@ -173,11 +175,16 @@ const App: React.FC = () => {
     setMessages(prev => [...prev, { role: 'user', text: finalInput }]);
     setInput('');
     setLoading(true);
-    setCurrentEmotion(Emotion.NEUTRAL);
+    
+    // Set anticipatory emotion while loading
+    if (currentEmotion === Emotion.NEUTRAL || currentEmotion === Emotion.CONFIDENT) {
+      setCurrentEmotion(Emotion.ANNOYED);
+    }
 
     try {
       const history = messages.map(m => ({ role: m.role, parts: [{ text: m.text }] }));
       const response = await sendMessageToGemini(finalInput, history);
+      
       setCurrentEmotion(response.emotion);
 
       if (voiceEnabled) {
@@ -198,7 +205,8 @@ const App: React.FC = () => {
       setMessages(prev => [...prev, { role: 'model', text: response.text, emotion: response.emotion }]);
     } catch (e) {
       setLoading(false);
-      setMessages(prev => [...prev, { role: 'model', text: "System break down. Logic non-existent.", emotion: Emotion.ANGRY }]);
+      setCurrentEmotion(Emotion.ANGRY);
+      setMessages(prev => [...prev, { role: 'model', text: "Abey gandu, mera dimaag kharab mat kar. System hang ho gaya tera kachra dekh ke.", emotion: Emotion.ANGRY }]);
     }
   };
 
@@ -287,7 +295,7 @@ const App: React.FC = () => {
                       {voiceEnabled ? <VolumeIcon /> : <VolumeMuteIcon />}
                     </button>
                     <a 
-                      href="https://instagram.com/aadi.nq" 
+                      href="https://instagram.com/zuck" 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="p-3 rounded-xl border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition-all text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white flex items-center justify-center"
@@ -302,7 +310,6 @@ const App: React.FC = () => {
               </div>
           </div>
 
-          {/* Desktop Only Mascot Display */}
           <div className="hidden lg:flex flex-1 flex-col items-center justify-center p-8 overflow-visible" style={{ transform: `translate(${mousePos.x}px, ${mousePos.y}px)` }}>
               <Cattu size="lg" emotion={currentEmotion} isTalking={isSpeaking} isLoading={loading} />
           </div>
@@ -339,7 +346,6 @@ const App: React.FC = () => {
               {loading && <TypingIndicator emotion={currentEmotion} />}
           </div>
 
-          {/* INPUT AREA */}
           <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-8 lg:p-12 bg-gradient-to-t from-white dark:from-obsidian via-white/90 dark:via-obsidian/90 to-transparent pointer-events-none">
               <div className="max-w-4xl mx-auto pointer-events-auto">
                   <div className={`flex items-center gap-2 sm:gap-4 bg-white/80 dark:bg-charcoal/80 border-2 backdrop-blur-3xl rounded-3xl sm:rounded-[2.5rem] p-2 sm:p-3 shadow-2xl transition-all duration-300 ${input.trim() ? 'border-black dark:border-white' : 'border-black/5 dark:border-white/5'}`}>

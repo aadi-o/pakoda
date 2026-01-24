@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Modality } from "@google/genai";
 import { SYSTEM_INSTRUCTION } from "../constants";
 import { Emotion, GeminiResponse } from "../types";
@@ -13,16 +14,16 @@ export const sendMessageToGemini = async (
 ): Promise<GeminiResponse> => {
   try {
     const ai = getAI();
-    // Switched to gemini-3-flash-preview for maximum speed and lower latency
+    // Use gemini-3-flash-preview for the absolute lowest latency
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: [...history.map(h => ({ role: h.role, parts: h.parts })), { role: 'user', parts: [{ text: message }] }],
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
-        temperature: 0.9,
+        temperature: 1.0, 
         topP: 0.95,
-        // Disable thinking to ensure the fastest possible response time
-        thinkingConfig: { thinkingBudget: 0 }
+        maxOutputTokens: 100, // Capped tokens = Faster response time
+        thinkingConfig: { thinkingBudget: 0 } // Bypass reasoning for instant reply
       },
     });
 
@@ -49,7 +50,7 @@ export const sendMessageToGemini = async (
   } catch (error) {
     console.error("Gemini API Error:", error);
     return {
-      text: "Abey system hang ho gaya tera kachra input dekh ke. Restart kar aur dhang ka sawal pooch.",
+      text: "Abey gandu, mera dimaag kharab mat kar. System hang ho gaya tera kachra dekh ke. Refresh kar aur nikal.",
       emotion: Emotion.ANGRY,
     };
   }
@@ -58,7 +59,8 @@ export const sendMessageToGemini = async (
 export const generateSpeech = async (text: string, emotion: Emotion): Promise<string | undefined> => {
   try {
     const ai = getAI();
-    const prompt = `Speak this in a ${emotion.toLowerCase()}, sharp, human tone. Be extremely sarcastic and quick: ${text}`;
+    // Prompt for TTS needs to be fast and human-like too
+    const prompt = `Speak this like a fast-talking, aggressive human. No robotic pauses. Pure attitude: ${text}`;
     
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-preview-tts",
@@ -67,7 +69,7 @@ export const generateSpeech = async (text: string, emotion: Emotion): Promise<st
         responseModalities: [Modality.AUDIO],
         speechConfig: {
           voiceConfig: {
-            prebuiltVoiceConfig: { voiceName: 'Puck' },
+            prebuiltVoiceConfig: { voiceName: 'Puck' }, // Puck has a more youthful, aggressive edge
           },
         },
       },
