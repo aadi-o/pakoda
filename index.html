@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
-<html lang="en" class="dark h-full">
+<html lang="en" class="light h-full">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover" />
-    <title>Pakoda | Street Legend</title>
+    <title>Pakoda | The Savage Sensei</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       window.process = { env: { API_KEY: "" } };
@@ -14,49 +14,30 @@
         theme: {
           extend: {
             colors: {
-              obsidian: '#050505',
-              charcoal: '#0a0a0a',
-              neonYellow: '#eab308',
-              toxicRed: '#ef4444',
-              streetCyan: '#06b6d4'
+              gallery: '#F9F8F6',
+              coralDusk: '#F28C8C',
+              mist: '#D6E9F0',
+              lavenderFog: '#EBE6F2',
+              slateInk: '#3A3D42',
+              paper: '#FFFFFF'
             },
             animation: {
-              'scanline': 'scanline 10s linear infinite',
-              'glitch-screen': 'glitch-screen 0.2s ease-in-out infinite',
-              'burn-pulse': 'burn-pulse 2s ease-in-out infinite',
-              'marquee': 'marquee 25s linear infinite',
-              'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) infinite',
-              'eye-flicker': 'eye-flicker 0.15s ease-in-out infinite',
+              'float': 'float 8s ease-in-out infinite',
+              'fade-in': 'fade-in 0.6s cubic-bezier(0.22, 1, 0.36, 1)',
+              'slide-up': 'slide-up 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
             },
             keyframes: {
-              'scanline': {
-                '0%': { transform: 'translateY(-100%)' },
-                '100%': { transform: 'translateY(100%)' }
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-12px)' },
               },
-              'burn-pulse': {
-                '0%, 100%': { opacity: '0.4', transform: 'scale(1)' },
-                '50%': { opacity: '0.8', transform: 'scale(1.05)' }
+              'fade-in': {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
               },
-              'marquee': {
-                '0%': { transform: 'translateX(100%)' },
-                '100%': { transform: 'translateX(-100%)' }
-              },
-              'glitch-screen': {
-                '0%': { transform: 'translate(0)', filter: 'hue-rotate(0deg)' },
-                '25%': { transform: 'translate(-2px, 1px)', filter: 'hue-rotate(90deg)' },
-                '50%': { transform: 'translate(2px, -1px)', filter: 'contrast(1.5)' },
-                '75%': { transform: 'translate(-1px, -1px)', filter: 'hue-rotate(180deg)' },
-                '100%': { transform: 'translate(0)' }
-              },
-              'shake': {
-                '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
-                '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
-                '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
-                '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
-              },
-              'eye-flicker': {
-                '0%, 100%': { opacity: '1', filter: 'brightness(1.5)' },
-                '50%': { opacity: '0.4', filter: 'brightness(3) drop-shadow(0 0 5px red)' }
+              'slide-up': {
+                '0%': { transform: 'translateY(16px)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' },
               }
             }
           }
@@ -64,47 +45,74 @@
       };
     </script>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&family=JetBrains+Mono:wght@800&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;500;600;700&display=swap');
       
       body {
-        font-family: 'Space Grotesk', sans-serif;
-        background-color: #050505;
-        color: white;
-        height: 100vh;
+        font-family: 'Inter', sans-serif;
+        background-color: #F9F8F6;
+        color: #3A3D42;
         height: 100dvh;
         overflow: hidden;
-        overscroll-behavior: none;
+        -webkit-font-smoothing: antialiased;
       }
 
-      .street-texture {
-        background-image: url("https://www.transparenttextures.com/patterns/carbon-fibre.png");
-        opacity: 0.1;
+      h1, h2, h3 {
+        font-family: 'DM Serif Display', serif;
       }
 
-      .scanline-overlay {
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: linear-gradient(to bottom, rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
-        background-size: 100% 4px, 3px 100%;
-        pointer-events: none;
-        z-index: 50;
-        opacity: 0.7;
+      .editorial-card {
+        background: #FFFFFF;
+        border: 1px solid rgba(58, 61, 66, 0.08);
+        box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.02);
+        border-radius: 32px;
       }
 
-      .burn-meter-gradient {
-        background: linear-gradient(to top, #06b6d4, #eab308, #ef4444);
+      .editorial-button {
+        background: #3A3D42;
+        color: #FFFFFF;
+        transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        border-radius: 100px;
+      }
+
+      .editorial-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px -8px rgba(58, 61, 66, 0.3);
+        background: #4A4D52;
+      }
+
+      .editorial-button:active {
+        transform: translateY(0px);
+      }
+
+      .message-user {
+        background: #D6E9F0;
+        border-radius: 24px 24px 4px 24px;
+      }
+
+      .message-model {
+        background: #FFFFFF;
+        border: 1px solid rgba(58, 61, 66, 0.06);
+        border-radius: 24px 24px 24px 4px;
       }
 
       ::-webkit-scrollbar {
         width: 4px;
       }
       ::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(58, 61, 66, 0.1);
         border-radius: 10px;
       }
 
-      input, button {
-        touch-action: manipulation;
+      .input-wrapper {
+        background: #FFFFFF;
+        border: 1px solid rgba(58, 61, 66, 0.1);
+        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+        border-radius: 100px;
+      }
+
+      .input-wrapper:focus-within {
+        border-color: #F28C8C;
+        box-shadow: 0 0 0 4px rgba(242, 140, 140, 0.1);
       }
     </style>
   <script type="importmap">
@@ -121,7 +129,6 @@
 </script>
 </head>
   <body class="m-0 p-0 overflow-hidden">
-    <div class="scanline-overlay"></div>
     <div id="root" class="h-full w-full"></div>
     <script type="module" src="/index.tsx"></script>
   </body>

@@ -1,5 +1,5 @@
 
-import React, { useMemo, useState, useEffect, useRef } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Emotion } from '../types';
 
 interface CattuProps {
@@ -9,113 +9,104 @@ interface CattuProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
-type MicroAction = 'none' | 'blink' | 'ear-twitch' | 'eye-glance' | 'tail-flick';
-
-const Cattu: React.FC<CattuProps> = ({ emotion, isTalking, isLoading, size = 'lg' }) => {
-  const [activeAction, setActiveAction] = useState<MicroAction>('none');
-  const timerRef = useRef<number | null>(null);
+const Cattu: React.FC<CattuProps> = ({ emotion, isTalking, size = 'lg' }) => {
+  const [blink, setBlink] = useState(false);
 
   useEffect(() => {
-    const triggerRandomAction = () => {
-      const random = Math.random();
-      let selected: MicroAction = 'none';
-      if (random < 0.2) selected = 'blink';
-      else if (random < 0.4) selected = 'ear-twitch';
-      else if (random < 0.6) selected = 'tail-flick';
-      
-      setActiveAction(selected);
-      setTimeout(() => setActiveAction('none'), 500);
-      timerRef.current = window.setTimeout(triggerRandomAction, 3000 + Math.random() * 5000);
-    };
-
-    timerRef.current = window.setTimeout(triggerRandomAction, 1000);
-    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+    const blinkInterval = setInterval(() => {
+      setBlink(true);
+      setTimeout(() => setBlink(false), 120);
+    }, 5000);
+    return () => clearInterval(blinkInterval);
   }, []);
 
   const sizeClasses = { 
-    sm: 'w-24 h-24', 
-    md: 'w-48 h-48 lg:w-64 lg:h-64', 
-    lg: 'w-64 h-64 md:w-80 md:h-80 lg:w-[400px] lg:h-[400px]' 
+    sm: 'w-16 h-16', 
+    md: 'w-36 h-36', 
+    lg: 'w-64 h-64 md:w-80 md:h-80' 
   };
 
-  const animationClass = useMemo(() => {
+  const emotionGlow = useMemo(() => {
     switch (emotion) {
-      case Emotion.ANGRY: return "animate-shake";
-      case Emotion.SAVAGE: return "animate-bounce";
-      case Emotion.ANNOYED: return "opacity-80 scale-95 transition-transform duration-500";
-      default: return "animate-pulse";
+      case Emotion.ANGRY: return 'rgba(242, 140, 140, 0.15)';
+      case Emotion.SAVAGE: return 'rgba(214, 233, 240, 0.4)';
+      default: return 'rgba(58, 61, 66, 0.03)';
     }
   }, [emotion]);
 
   return (
-    <div className={`${sizeClasses[size]} flex items-center justify-center relative select-none pointer-events-none`}>
-      <div className={`w-full h-full transition-all duration-300 ${animationClass}`}>
-        <svg viewBox="0 0 200 230" className="w-full h-full drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">
-          {/* Persona Accents */}
-          {emotion === Emotion.SAVAGE && (
-            <g transform="translate(40, 100)" className="z-20 text-black">
-              <rect width="120" height="30" rx="4" fill="currentColor" />
-              <rect x="10" y="5" width="40" height="20" rx="2" fill="#111" />
-              <rect x="70" y="5" width="40" height="20" rx="2" fill="#111" />
-              <path d="M 50 15 L 70 15" stroke="currentColor" strokeWidth="4" />
+    <div className={`${sizeClasses[size]} flex items-center justify-center relative select-none animate-float`}>
+      <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-sm">
+        <defs>
+          <linearGradient id="headGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#FFFFFF" />
+            <stop offset="100%" stopColor="#F9F8F6" />
+          </linearGradient>
+        </defs>
+
+        {/* Soft Background Aura */}
+        <circle cx="100" cy="100" r="90" fill={emotionGlow} className="transition-all duration-1000" />
+        
+        {/* Ears - Refined stroke and shape */}
+        <path d="M 55 65 L 35 15 Q 75 5 85 45" fill="url(#headGradient)" stroke="#3A3D42" strokeWidth="1.5" strokeLinejoin="round" />
+        <path d="M 145 65 L 165 15 Q 125 5 115 45" fill="url(#headGradient)" stroke="#3A3D42" strokeWidth="1.5" strokeLinejoin="round" />
+        
+        {/* Main Head - Stoic Shape */}
+        <path 
+          d="M 45 75 Q 100 55 155 75 Q 185 100 175 145 Q 165 185 100 185 Q 35 185 25 145 Q 15 100 45 75" 
+          fill="url(#headGradient)" 
+          stroke="#3A3D42" 
+          strokeWidth="1.5" 
+        />
+
+        {/* Face Details */}
+        <g transform="translate(0, 15)">
+          {/* Eyes - Precise and Mature */}
+          {!blink ? (
+            <>
+              <g transform="translate(68, 105)">
+                <circle r="10" fill="white" stroke="#3A3D42" strokeWidth="1" />
+                <circle r="4" fill="#3A3D42" cx={emotion === Emotion.ANGRY ? -1 : 0} cy={isTalking ? -1 : 0} />
+              </g>
+              <g transform="translate(132, 105)">
+                <circle r="10" fill="white" stroke="#3A3D42" strokeWidth="1" />
+                <circle r="4" fill="#3A3D42" cx={emotion === Emotion.ANGRY ? 1 : 0} cy={isTalking ? -1 : 0} />
+              </g>
+            </>
+          ) : (
+            <>
+              <path d="M 58 105 Q 68 103 78 105" fill="none" stroke="#3A3D42" strokeWidth="1.5" strokeLinecap="round" />
+              <path d="M 122 105 Q 132 103 142 105" fill="none" stroke="#3A3D42" strokeWidth="1.5" strokeLinecap="round" />
+            </>
+          )}
+
+          {/* Mature Expression Lines */}
+          {emotion === Emotion.ANGRY && (
+            <g transform="translate(100, 90)" opacity="0.6">
+              <path d="M -45 -5 Q -30 -12 -15 -5" fill="none" stroke="#3A3D42" strokeWidth="1" />
+              <path d="M 45 -5 Q 30 -12 15 -5" fill="none" stroke="#3A3D42" strokeWidth="1" />
             </g>
           )}
 
-          {/* Body/Face */}
-          <path 
-            d="M 45 60 Q 100 40, 155 60 Q 185 75, 185 125 L 185 175 Q 160 215, 100 215 Q 40 215, 15 175 L 15 125 Q 15 75, 45 60" 
-            fill="currentColor" 
-            className={`${emotion === Emotion.ANGRY ? 'text-toxicRed' : emotion === Emotion.SAVAGE ? 'text-streetCyan' : 'text-white'} opacity-10 transition-colors duration-500`}
-          />
-          <path 
-            d="M 45 60 Q 100 40, 155 60 Q 185 75, 185 125 L 185 175 Q 160 215, 100 215 Q 40 215, 15 175 L 15 125 Q 15 75, 45 60" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="12"
-            className={`${emotion === Emotion.ANGRY ? 'text-toxicRed' : emotion === Emotion.SAVAGE ? 'text-streetCyan' : 'text-white'} transition-colors duration-500`}
-          />
-
-          {/* Ears */}
-          <g className={activeAction === 'ear-twitch' ? 'animate-ear-twitch-once' : ''}>
-            <path d="M 45 60 L 25 10 Q 55 -5, 80 30" fill="currentColor" className="text-current transition-colors duration-500" />
-            <path d="M 120 55 L 135 10 Q 165 -5, 175 60" fill="currentColor" className="text-current transition-colors duration-500" />
-          </g>
-
-          {/* Eyes */}
-          {activeAction !== 'blink' && (
-            <g className={`${isTalking ? 'animate-pulse' : ''}`}>
-              <circle cx="65" cy="120" r="16" fill="currentColor" className="text-current transition-colors duration-500" />
-              <circle cx="135" cy="120" r="16" fill="currentColor" className="text-current transition-colors duration-500" />
-              
-              {/* Pupils with ANGRY flicker */}
-              <circle 
-                cx="67" cy="116" r="6" 
-                fill={emotion === Emotion.ANGRY ? '#ff0000' : 'black'} 
-                className={emotion === Emotion.ANGRY ? 'animate-eye-flicker' : 'transition-colors duration-500'} 
-              />
-              <circle 
-                cx="137" cy="116" r="6" 
-                fill={emotion === Emotion.ANGRY ? '#ff0000' : 'black'} 
-                className={emotion === Emotion.ANGRY ? 'animate-eye-flicker' : 'transition-colors duration-500'} 
-              />
-            </g>
-          )}
-
-          {/* Mouth */}
-          <g transform="translate(100, 170)">
+          {/* Mouth - Subtle and expressive */}
+          <g transform="translate(100, 145)">
             {isTalking ? (
-              <path d="M -20 0 Q 0 20 20 0" stroke="currentColor" strokeWidth="10" fill="none" strokeLinecap="round" className="transition-colors duration-500" />
+              <path d="M -12 0 Q 0 10 12 0" fill="#F28C8C" stroke="#3A3D42" strokeWidth="1.2" opacity="0.9" />
             ) : (
-              <path d="M -15 5 L 15 5" stroke="currentColor" strokeWidth="8" strokeLinecap="round" className="transition-colors duration-500" />
+              <path d="M -8 3 Q 0 0 8 3" fill="none" stroke="#3A3D42" strokeWidth="1.2" strokeLinecap="round" opacity="0.7" />
             )}
           </g>
-        </svg>
-      </div>
-      
-      {/* Background Glow */}
-      <div className={`absolute -z-10 w-[150%] h-[150%] rounded-full blur-[100px] transition-all duration-1000
-        ${emotion === Emotion.ANGRY ? 'bg-toxicRed opacity-30' : emotion === Emotion.SAVAGE ? 'bg-streetCyan opacity-15' : 'bg-white opacity-5'}`} 
-      />
+        </g>
+
+        {/* Minimalist Glasses (Savage Mode) */}
+        {emotion === Emotion.SAVAGE && (
+          <g transform="translate(50, 95)" className="animate-fade-in">
+            <rect width="40" height="18" rx="2" fill="white" stroke="#3A3D42" strokeWidth="1.5" strokeOpacity="0.8" />
+            <rect x="60" width="40" height="18" rx="2" fill="white" stroke="#3A3D42" strokeWidth="1.5" strokeOpacity="0.8" />
+            <line x1="40" y1="9" x2="60" y2="9" stroke="#3A3D42" strokeWidth="1.5" />
+          </g>
+        )}
+      </svg>
     </div>
   );
 };
