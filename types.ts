@@ -19,10 +19,11 @@ export interface ChatMessage {
   role: 'user' | 'model';
   text: string;
   emotion?: Emotion;
-  character?: 'pakoda' | 'masala';
+  character?: 'pakoda' | 'masala' | 'bun';
 }
 
 export interface GeminiResponse {
   text: string;
   emotion: Emotion;
+  iqAdjustment: number;
 }
