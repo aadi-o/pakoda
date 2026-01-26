@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { Emotion } from '../types';
 
@@ -23,6 +22,9 @@ const Cattu: React.FC<CattuProps> = ({ emotion, isTalking, size = 'lg' }) => {
       default: return 'rgba(45, 55, 72, 0.03)';
     }
   }, [emotion]);
+
+  // Generates a lifelike random duration for the blink cycle between 4s and 6s
+  const blinkDuration = useMemo(() => (4 + Math.random() * 2).toFixed(2) + 's', []);
 
   return (
     <div className={`${sizeClasses[size]} flex items-center justify-center relative select-none animate-soft-float`}>
@@ -99,7 +101,11 @@ const Cattu: React.FC<CattuProps> = ({ emotion, isTalking, size = 'lg' }) => {
               {/* Eyes Group - Attentive Focus with Darting Pupils */}
               <g 
                 className="animate-eye-blink" 
-                style={{ transformOrigin: 'center', transformBox: 'fill-box' } as any}
+                style={{ 
+                  transformOrigin: 'center', 
+                  transformBox: 'fill-box',
+                  animationDuration: blinkDuration 
+                } as any}
               >
                 {/* Left Eye */}
                 <g transform="translate(65, 110)">
@@ -134,14 +140,14 @@ const Cattu: React.FC<CattuProps> = ({ emotion, isTalking, size = 'lg' }) => {
                 
                 <g transform="translate(0, 8)">
                   {isTalking ? (
-                    <g className="animate-talking-mouth" style={{ transformOrigin: '0px 0px' } as any}>
-                      <path 
-                        d="M -15 0 Q 0 20 15 0 Q 0 8 -15 0" 
-                        fill="#E57373" 
-                        stroke="#2D3748" 
-                        strokeWidth="1.4" 
-                      />
-                    </g>
+                    <path 
+                      d="M -15 0 Q 0 20 15 0 Q 0 8 -15 0" 
+                      fill="#E57373" 
+                      stroke="#2D3748" 
+                      strokeWidth="1.4" 
+                      className="animate-talking-mouth"
+                      style={{ transformOrigin: 'center', transformBox: 'fill-box' } as any}
+                    />
                   ) : (
                     <path 
                       d="M -8 2 Q -4 -2 0 2 Q 4 -2 8 2" 

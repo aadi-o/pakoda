@@ -8,6 +8,37 @@ import Kaju from './components/Kaju';
 import { sendMessageToGemini, generateSpeech } from './services/geminiService';
 import { ChatMessage, Emotion, RoastIntensity, INTENSITY_MAP } from './types';
 
+const TypewriterText: React.FC<{ text: string; duration: number }> = ({ text, duration }) => {
+  const [displayedText, setDisplayedText] = useState('');
+  
+  useEffect(() => {
+    if (!duration || duration <= 0) {
+      setDisplayedText(text);
+      return;
+    }
+
+    let start: number | null = null;
+    let frameId: number;
+    
+    const animate = (time: number) => {
+      if (start === null) start = time;
+      const progress = (time - start) / (duration * 1000);
+      const currentLength = Math.floor(text.length * Math.min(progress, 1));
+      
+      setDisplayedText(text.slice(0, currentLength));
+      
+      if (progress < 1) {
+        frameId = requestAnimationFrame(animate);
+      }
+    };
+    
+    frameId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frameId);
+  }, [text, duration]);
+
+  return <>{displayedText}</>;
+};
+
 const ArchitectOverlay: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
@@ -92,14 +123,12 @@ const ArtistCredit: React.FC<{ isOpen: boolean; onOpen: () => void; onClose: () 
           onClick={onOpen}
           className="relative px-5 py-2 sm:px-8 sm:py-3 bg-white border-[2.5px] border-slateInk rounded-[1.2rem] sm:rounded-[1.5rem] shadow-[4px_4px_0px_#2D3748] hover:shadow-[3px_3px_0px_#E57373] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all tap-highlight-transparent group/btn overflow-hidden"
         >
-          {/* Subtle background glow effect */}
           <div className="absolute inset-0 bg-gradient-to-tr from-mutedRose/5 to-transparent opacity-0 group-hover/btn:opacity-100 transition-opacity" />
           
           <div className="relative flex items-center gap-3">
             <div className="signature text-2xl sm:text-4xl text-slateInk leading-none tracking-tighter group-hover/btn:text-mutedRose transition-colors">
               Aadi
             </div>
-            {/* Architectural mark */}
             <div className="w-[1.5px] h-4 sm:h-6 bg-slateInk/10 group-hover/btn:bg-mutedRose/20 transition-colors" />
             <svg className="w-3 h-3 sm:w-4 sm:h-4 text-slateInk/30 group-hover/btn:text-mutedRose/60 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 4v16m8-8H4" />
@@ -132,6 +161,7 @@ const App: React.FC = () => {
   const [kajuComment, setKajuComment] = useState("");
   const [isCreditOpen, setIsCreditOpen] = useState(false);
   const [autoCreditTimer, setAutoCreditTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
+  const [lastMessageDuration, setLastMessageDuration] = useState(0);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -175,11 +205,9 @@ const App: React.FC = () => {
       const history = messages.map(m => ({ role: m.role, parts: [{ text: m.text }] }));
       const response = await sendMessageToGemini(textToSend, history, intensity);
       
-      setCurrentEmotion(response.emotion);
-      setUserIQ(prev => Math.max(-50, prev + response.iqAdjustment));
-      setMessages(prev => [...prev, { role: 'model', text: response.text, emotion: response.emotion }]);
-      
       const audioData = await generateSpeech(response.text, response.emotion);
+      let duration = 0;
+
       if (audioData) {
         if (!audioContextRef.current) audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({sampleRate: 24000});
         const binary = atob(audioData);
@@ -192,49 +220,40 @@ const App: React.FC = () => {
 
         const source = audioContextRef.current.createBufferSource();
         source.buffer = buffer;
+        duration = buffer.duration;
+        setLastMessageDuration(duration);
+        
         source.connect(audioContextRef.current.destination);
         setIsSpeaking(true);
         source.onended = () => setIsSpeaking(false);
         source.start();
       }
 
+      setCurrentEmotion(response.emotion);
+      setUserIQ(prev => Math.max(-50, prev + response.iqAdjustment));
+      
+      // Add the message and start sync
+      setMessages(prev => [...prev, { role: 'model', text: response.text, emotion: response.emotion }]);
+      
       setLoading(false);
       
       const roll = Math.random();
-      
-      // Character pop-up logic
       if (roll > 0.85 || response.iqAdjustment < -15) {
         setMasalaComment(response.iqAdjustment < 0 ? "BRAIN CELLS LEAVING..." : "Master is impressed?");
         setShowMasala(true);
         setTimeout(() => setShowMasala(false), 3000);
       } else if (roll < 0.15 || response.iqAdjustment >= 0) {
-        const bunLines = [
-          "Take it easy, Pakoda. He's trying.",
-          "Softly now... he has feelings too.",
-          "Maska lagane ka time aa gaya.",
-          "Pure Zen mode, no hate today.",
-          "Even a chomu deserves a bun."
-        ];
-        setBunComment(bunLines[Math.floor(Math.random() * bunLines.length)]);
+        setBunComment("Softly now... he has feelings too.");
         setShowBun(true);
         setTimeout(() => setShowBun(false), 3500);
       } else if (roll > 0.4 && roll < 0.6 || userIQ < 20) {
-        const cuttingLines = ["RIP LOGIC!", "IQ ZERO!", "SINGLE DIGIT VIBES!", "BRAIN IS VACATIONING!", "CHOMU LEVEL MAX!"];
-        setCuttingComment(cuttingLines[Math.floor(Math.random() * cuttingLines.length)]);
+        setCuttingComment("RIP LOGIC!");
         setShowCutting(true);
         setTimeout(() => setShowCutting(false), 2500);
       }
 
-      // Rare Kaju Spirit logic (5% chance after a brutal roast)
       if (Math.random() < 0.05 && response.iqAdjustment < -15) {
-        const kajuLines = [
-          "Deep breaths... your soul is still beautiful.",
-          "He doesn't mean it, you're doing great.",
-          "A moment of silence for your feelings.",
-          "Focus on the light, ignore the heat.",
-          "You are a star in a galaxy of chomus."
-        ];
-        setKajuComment(kajuLines[Math.floor(Math.random() * kajuLines.length)]);
+        setKajuComment("Deep breaths... your soul is still beautiful.");
         setShowKaju(true);
         setTimeout(() => setShowKaju(false), 5000);
       }
@@ -333,7 +352,11 @@ const App: React.FC = () => {
                     </span>
                    </div>
                    <p className={`text-base sm:text-xl lg:text-2xl leading-relaxed font-bold tracking-tight ${m.role === 'model' && m.emotion === Emotion.ANGRY ? 'text-mutedRose' : 'text-slateInk/90'}`}>
-                    {m.text}
+                    {m.role === 'model' && i === messages.length - 1 && isSpeaking ? (
+                      <TypewriterText text={m.text} duration={lastMessageDuration} />
+                    ) : (
+                      m.text
+                    )}
                    </p>
                 </div>
               </div>
@@ -350,7 +373,6 @@ const App: React.FC = () => {
             )}
           </div>
 
-          {/* Floating Sidekicks Container */}
           <div className="absolute top-24 left-4 sm:left-10 z-20 scale-75 sm:scale-100 origin-top-left pointer-events-none">
             <Cutting isVisible={showCutting} comment={cuttingComment} />
           </div>
@@ -429,7 +451,6 @@ const App: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Brain Scan Lines Background */}
                 <div className="absolute inset-0 pointer-events-none opacity-[0.03]">
                   <div className="h-full w-full bg-[repeating-linear-gradient(0deg,#000,#000_1px,transparent_1px,transparent_4px)]" />
                 </div>

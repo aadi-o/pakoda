@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Modality } from "@google/genai";
 import { SYSTEM_INSTRUCTION } from "../constants";
 import { Emotion, GeminiResponse, RoastIntensity } from "../types";
@@ -24,7 +23,7 @@ export const sendMessageToGemini = async (
         temperature: 1.0, 
         topP: 0.95,
         maxOutputTokens: 150,
-        thinkingConfig: { thinkingBudget: 0 }
+        thinkingConfig: { thinkingBudget: 0 } // Fix: Reduced delay by disabling unnecessary reasoning
       },
     });
 
@@ -70,7 +69,7 @@ export const sendMessageToGemini = async (
 export const generateSpeech = async (text: string, emotion: Emotion): Promise<string | undefined> => {
   try {
     const ai = getAI();
-    // Added instructions for rapid-fire delivery to reduce gaps between words
+    // SPEED OPTIMIZED PROMPT: Rapid-fire delivery with zero pauses to fix the delay.
     const prompt = `Speak this extremely fast with zero pauses, rapid-fire street-smart attitude. Speed: 1.25x. Tone: Aggressive but composed. Text: ${text}`;
     
     const response = await ai.models.generateContent({
@@ -78,7 +77,7 @@ export const generateSpeech = async (text: string, emotion: Emotion): Promise<st
       contents: [{ parts: [{ text: prompt }] }],
       config: {
         responseModalities: [Modality.AUDIO],
-        thinkingConfig: { thinkingBudget: 0 }, // Minimize pre-speech thinking time
+        thinkingConfig: { thinkingBudget: 0 }, // Fix: Faster speech start
         speechConfig: {
           voiceConfig: {
             prebuiltVoiceConfig: { voiceName: 'Puck' },
