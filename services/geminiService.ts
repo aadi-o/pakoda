@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Modality } from "@google/genai";
 import { SYSTEM_INSTRUCTION } from "../constants";
 import { Emotion, GeminiResponse, RoastIntensity } from "../types";
@@ -23,13 +24,11 @@ export const sendMessageToGemini = async (
         temperature: 1.0, 
         topP: 0.95,
         maxOutputTokens: 150,
-        thinkingConfig: { thinkingBudget: 0 } // Fix: Reduced delay by disabling unnecessary reasoning
+        thinkingConfig: { thinkingBudget: 0 }
       },
     });
 
     const responseText = response.text || "";
-    
-    // Updated Regex to catch [EMOTION] [IQ: +/-X]
     const emotionRegex = /\[(NEUTRAL|ANNOYED|CONFIDENT|SAVAGE|ANGRY)\]/i;
     const iqRegex = /\[IQ:\s*([+-]?\d+)\]/i;
 
@@ -69,15 +68,15 @@ export const sendMessageToGemini = async (
 export const generateSpeech = async (text: string, emotion: Emotion): Promise<string | undefined> => {
   try {
     const ai = getAI();
-    // SPEED OPTIMIZED PROMPT: Rapid-fire delivery with zero pauses to fix the delay.
-    const prompt = `Speak this extremely fast with zero pauses, rapid-fire street-smart attitude. Speed: 1.25x. Tone: Aggressive but composed. Text: ${text}`;
+    // Adjusted prompt for natural speed and street-smart confidence
+    const prompt = `Speak this with confidence, natural speed, and a street-smart attitude. No robotic pauses. Text: ${text}`;
     
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-preview-tts",
       contents: [{ parts: [{ text: prompt }] }],
       config: {
         responseModalities: [Modality.AUDIO],
-        thinkingConfig: { thinkingBudget: 0 }, // Fix: Faster speech start
+        thinkingConfig: { thinkingBudget: 0 },
         speechConfig: {
           voiceConfig: {
             prebuiltVoiceConfig: { voiceName: 'Puck' },
@@ -88,6 +87,7 @@ export const generateSpeech = async (text: string, emotion: Emotion): Promise<st
 
     return response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
   } catch (error) {
+    console.error("TTS Error:", error);
     return undefined;
   }
 };
