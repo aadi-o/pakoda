@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover" />
-    <title>Pakoda | Obsidian AI</title>
+    <title>Pakoda | Street Legend</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       window.process = { env: { API_KEY: "" } };
@@ -13,126 +14,44 @@
         theme: {
           extend: {
             colors: {
-              obsidian: '#000000',
+              obsidian: '#050505',
               charcoal: '#0a0a0a',
-              border: '#1a1a1a',
-              muted: '#737373'
+              neonYellow: '#eab308',
+              toxicRed: '#ef4444',
+              streetCyan: '#06b6d4'
             },
             animation: {
-              'liquid': 'liquid 8s ease-in-out infinite',
-              'glitch-fast': 'glitch 0.2s infinite',
-              'status-glitch': 'status-glitch 2s infinite',
-              'sway-neutral': 'sway 19s ease-in-out infinite',
-              'thinking-float': 'thinking-float 3s ease-in-out infinite',
-              'breath-neutral': 'breathing-neutral 7.1s infinite ease-in-out',
-              'breath-annoyed': 'breathing-annoyed 11.3s infinite ease-in-out',
-              'breath-confident': 'breathing-confident 4s infinite ease-in-out',
-              
-              'ear-twitch-once': 'ear-twitch 0.4s ease-in-out',
-              'tail-flick-once': 'tail-flick 0.7s ease-in-out',
-              'eye-glance-once': 'eye-glance-quick 0.3s step-end',
-              
-              'jitter': 'jitter 0.15s infinite',
-              'superior-pulse': 'superior-pulse 2s ease-in-out infinite',
-              'eye-drift': 'eye-drift 6s ease-in-out infinite',
-              'subtle-twitch': 'subtle-twitch 4s ease-in-out infinite',
-              'float-savage': 'float-savage 2.5s ease-in-out infinite',
-              'pupil-drift': 'pupil-drift 10s ease-in-out infinite',
-              'slide-up': 'slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-              'explosive-vibration': 'explosive 0.1s infinite',
-              
-              'hover-react-neutral': 'hover-neutral 0.3s ease-out forwards',
-              'hover-react-annoyed': 'hover-annoyed 0.3s ease-out forwards',
-              'hover-react-angry': 'hover-angry 0.2s infinite ease-in-out',
-
-              'shake-hard': 'shake-hard 0.1s infinite',
-              'glitch-savage': 'glitch-savage 0.3s infinite',
-              'glow-pulse-confident': 'glow-pulse 1.5s ease-in-out infinite',
-              'fade-annoyed': 'fade-annoyed 3s ease-in-out infinite'
+              'scanline': 'scanline 10s linear infinite',
+              'glitch-screen': 'glitch-screen 0.2s ease-in-out infinite',
+              'burn-pulse': 'burn-pulse 2s ease-in-out infinite',
+              'marquee': 'marquee 25s linear infinite',
+              'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
             },
             keyframes: {
-              'shake-hard': {
-                '0%, 100%': { transform: 'translate(0,0)' },
-                '10%, 30%, 50%, 70%, 90%': { transform: 'translate(-4px, 0)' },
-                '20%, 40%, 60%, 80%': { transform: 'translate(4px, 0)' }
+              'scanline': {
+                '0%': { transform: 'translateY(-100%)' },
+                '100%': { transform: 'translateY(100%)' }
               },
-              'glitch-savage': {
-                '0%': { transform: 'translate(0)', filter: 'hue-rotate(0deg) contrast(1.2)' },
-                '20%': { transform: 'translate(-5px, 2px)', filter: 'hue-rotate(90deg) brightness(1.2)' },
-                '40%': { transform: 'translate(-3px, -2px)', filter: 'hue-rotate(180deg)' },
-                '60%': { transform: 'translate(5px, 2px)', filter: 'hue-rotate(270deg) contrast(1.5)' },
-                '80%': { transform: 'translate(3px, -2px)', filter: 'hue-rotate(360deg)' },
+              'burn-pulse': {
+                '0%, 100%': { opacity: '0.4', transform: 'scale(1)' },
+                '50%': { opacity: '0.8', transform: 'scale(1.05)' }
+              },
+              'marquee': {
+                '0%': { transform: 'translateX(100%)' },
+                '100%': { transform: 'translateX(-100%)' }
+              },
+              'glitch-screen': {
+                '0%': { transform: 'translate(0)', filter: 'hue-rotate(0deg)' },
+                '25%': { transform: 'translate(-2px, 1px)', filter: 'hue-rotate(90deg)' },
+                '50%': { transform: 'translate(2px, -1px)', filter: 'contrast(1.5)' },
+                '75%': { transform: 'translate(-1px, -1px)', filter: 'hue-rotate(180deg)' },
                 '100%': { transform: 'translate(0)' }
               },
-              'glow-pulse': {
-                '0%, 100%': { boxShadow: '0 0 5px rgba(234,179,8,0.2)', opacity: '0.8', transform: 'scale(1)' },
-                '50%': { boxShadow: '0 0 30px rgba(234,179,8,0.6)', opacity: '1', transform: 'scale(1.02)' }
-              },
-              'fade-annoyed': {
-                '0%, 100%': { opacity: '0.3', filter: 'grayscale(1) contrast(0.8)' },
-                '50%': { opacity: '0.6', filter: 'grayscale(0.5) contrast(1)' }
-              },
-              'slide-up': {
-                '0%': { transform: 'translateY(20px)', opacity: '0' },
-                '100%': { transform: 'translateY(0)', opacity: '1' }
-              },
-              'thinking-float': {
-                '0%, 100%': { transform: 'translateY(0) rotate(0)' },
-                '50%': { transform: 'translateY(-20px) rotate(2deg)' }
-              },
-              'float-savage': {
-                '0%, 100%': { transform: 'translateY(0) scale(1.05) rotate(0.5deg)' },
-                '50%': { transform: 'translateY(-15px) scale(1) rotate(-0.5deg)' }
-              },
-              'explosive': {
-                '0%, 100%': { transform: 'translate(0,0) scale(1)' },
-                '25%': { transform: 'translate(3px, -3px) scale(1.02)' },
-                '75%': { transform: 'translate(-3px, 3px) scale(0.98)' }
-              },
-              'jitter': {
-                '0%, 100%': { transform: 'translate(0, 0)' },
-                '20%': { transform: 'translate(-2px, 2px)' },
-                '40%': { transform: 'translate(-2px, -2px)' },
-                '60%': { transform: 'translate(2px, 2px)' },
-                '80%': { transform: 'translate(2px, -2px)' }
-              },
-              'eye-drift': {
-                '0%, 100%': { transform: 'translate(0, 0)' },
-                '25%': { transform: 'translate(4px, -2px)' },
-                '50%': { transform: 'translate(-2px, 3px)' },
-                '75%': { transform: 'translate(-4px, -1px)' }
-              },
-              'breathing-neutral': {
-                '0%, 100%': { transform: 'scale(1) translateY(0)' },
-                '50%': { transform: 'scale(1.02, 0.98) translateY(-4px)' }
-              },
-              'breathing-annoyed': {
-                '0%, 100%': { transform: 'scale(1) translateY(0)' },
-                '50%': { transform: 'scale(0.97, 1.03) translateY(2px)' }
-              },
-              'breathing-confident': {
-                '0%, 100%': { transform: 'scale(1) translateY(0)' },
-                '50%': { transform: 'scale(1.1, 0.94) translateY(-12px)' }
-              },
-              'sway': {
-                '0%, 100%': { transform: 'rotate(-1deg) translateX(-3px)' },
-                '50%': { transform: 'rotate(1.5deg) translateX(5px)' }
-              },
-              'tail-flick': {
-                '0%, 100%': { transform: 'rotate(0)' },
-                '30%': { transform: 'rotate(35deg) scaleY(1.2)' },
-                '60%': { transform: 'rotate(-15deg) scaleY(0.9)' },
-                '100%': { transform: 'rotate(0)' }
-              },
-              'ear-twitch': {
-                '0%, 100%': { transform: 'rotate(0)' },
-                '40%': { transform: 'rotate(-15deg) scaleX(1.1)' },
-                '60%': { transform: 'rotate(10deg) scaleX(0.9)' },
-                '80%': { transform: 'rotate(-5deg)' }
-              },
-              'eye-glance-quick': {
-                '0%, 100%': { transform: 'translate(0, 0)' },
-                '10%, 90%': { transform: 'var(--glance-xy, translate(5px, -3px))' }
+              'shake': {
+                '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
+                '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
+                '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
+                '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
               }
             }
           }
@@ -140,27 +59,46 @@
       };
     </script>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@700&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&family=JetBrains+Mono:wght@800&display=swap');
       
       body {
-        font-family: 'Inter', sans-serif;
-        margin: 0;
+        font-family: 'Space Grotesk', sans-serif;
+        background-color: #050505;
+        color: white;
+        overscroll-behavior: none;
         -webkit-tap-highlight-color: transparent;
       }
 
-      .bg-grid {
-        background-size: 40px 40px;
-        background-image: 
-          linear-gradient(to right, currentColor 1px, transparent 1px),
-          linear-gradient(to bottom, currentColor 1px, transparent 1px);
+      .street-texture {
+        background-image: url("https://www.transparenttextures.com/patterns/carbon-fibre.png");
+        opacity: 0.15;
       }
 
-      .scrollbar-hide::-webkit-scrollbar {
-        display: none;
+      .scanline-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(to bottom, rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+        background-size: 100% 4px, 3px 100%;
+        pointer-events: none;
+        z-index: 50;
       }
-      .scrollbar-hide {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
+
+      .burn-meter-gradient {
+        background: linear-gradient(to top, #06b6d4, #eab308, #ef4444);
+      }
+
+      /* Better scrollbar for mobile */
+      ::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.1);
+        border-radius: 10px;
+      }
+      
+      input, button {
+        touch-action: manipulation;
       }
     </style>
   <script type="importmap">
@@ -176,8 +114,9 @@
 }
 </script>
 </head>
-  <body class="bg-white dark:bg-obsidian overflow-hidden">
-    <div id="root"></div>
+  <body class="overflow-hidden h-full">
+    <div class="scanline-overlay"></div>
+    <div id="root" class="h-full"></div>
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>
