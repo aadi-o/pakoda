@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+
+import React, { useMemo, useEffect, useRef } from 'react';
 import { Emotion } from '../types';
 
 interface CattuProps {
@@ -14,6 +15,51 @@ const Cattu: React.FC<CattuProps> = ({ emotion, isTalking, size = 'lg' }) => {
     md: 'w-36 h-36', 
     lg: 'w-64 h-64 md:w-80 md:h-80' 
   };
+
+  const audioCtxRef = useRef<AudioContext | null>(null);
+
+  useEffect(() => {
+    let interval: ReturnType<typeof setInterval>;
+
+    if (isTalking) {
+      // Initialize AudioContext on first talk to ensure it's allowed by user gesture
+      if (!audioCtxRef.current) {
+        audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      }
+
+      const playBlip = () => {
+        if (!audioCtxRef.current) return;
+        if (audioCtxRef.current.state === 'suspended') {
+          audioCtxRef.current.resume();
+        }
+
+        const osc = audioCtxRef.current.createOscillator();
+        const gain = audioCtxRef.current.createGain();
+
+        // Mechanical "tick" sound using a low square wave with a fast decay
+        osc.type = 'square'; 
+        osc.frequency.setValueAtTime(150, audioCtxRef.current.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(40, audioCtxRef.current.currentTime + 0.1);
+
+        gain.gain.setValueAtTime(0.015, audioCtxRef.current.currentTime); // Very subtle volume
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtxRef.current.currentTime + 0.1);
+
+        osc.connect(gain);
+        gain.connect(audioCtxRef.current.destination);
+
+        osc.start();
+        osc.stop(audioCtxRef.current.currentTime + 0.1);
+      };
+
+      // Play immediately and then every 200ms to match 'talking-mouth' animation cycle (0.2s)
+      playBlip();
+      interval = setInterval(playBlip, 200);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isTalking]);
 
   const emotionGlow = useMemo(() => {
     switch (emotion) {
