@@ -13,8 +13,14 @@ const STREET_NEWS = [
   "CHAPRI ALERT: HAIR COLOR TOO BRIGHT FOR THE SERVER",
 ];
 
-const BurnMeter: React.FC<{ level: number, horizontal?: boolean }> = ({ level, horizontal }) => (
-  <div className={`flex ${horizontal ? 'flex-row items-center gap-2' : 'flex-col items-center gap-2'} group`}>
+interface BurnMeterProps {
+  level: number;
+  horizontal?: boolean;
+  className?: string;
+}
+
+const BurnMeter = ({ level, horizontal, className = '' }: BurnMeterProps) => (
+  <div className={`flex ${horizontal ? 'flex-row items-center gap-2' : 'flex-col items-center gap-2'} group ${className}`}>
     <div className={`${horizontal ? 'w-24 h-2' : 'h-32 lg:h-48 w-4'} bg-zinc-900 rounded-full overflow-hidden border border-white/10 relative`}>
       <div 
         className={`absolute bottom-0 ${horizontal ? 'left-0 h-full' : 'w-full'} burn-meter-gradient transition-all duration-1000 ease-out`}
