@@ -17,7 +17,6 @@ const Cattu: React.FC<CattuProps> = ({ emotion, isTalking, isLoading, size = 'lg
 
   useEffect(() => {
     const triggerRandomAction = () => {
-      const actions: MicroAction[] = ['blink', 'ear-twitch', 'eye-glance', 'tail-flick'];
       const random = Math.random();
       let selected: MicroAction = 'none';
       if (random < 0.2) selected = 'blink';
@@ -36,7 +35,7 @@ const Cattu: React.FC<CattuProps> = ({ emotion, isTalking, isLoading, size = 'lg
   const sizeClasses = { 
     sm: 'w-24 h-24', 
     md: 'w-48 h-48 lg:w-64 lg:h-64', 
-    lg: 'w-72 h-72 md:w-[400px] md:h-[400px]' 
+    lg: 'w-64 h-64 md:w-80 md:h-80 lg:w-[400px] lg:h-[400px]' 
   };
 
   const animationClass = useMemo(() => {
@@ -49,9 +48,9 @@ const Cattu: React.FC<CattuProps> = ({ emotion, isTalking, isLoading, size = 'lg
   }, [emotion]);
 
   return (
-    <div className={`${sizeClasses[size]} flex items-center justify-center relative`}>
+    <div className={`${sizeClasses[size]} flex items-center justify-center relative select-none pointer-events-none`}>
       <div className={`w-full h-full transition-all duration-300 ${animationClass}`}>
-        <svg viewBox="0 0 200 230" className="w-full h-full drop-shadow-2xl">
+        <svg viewBox="0 0 200 230" className="w-full h-full drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">
           {/* Persona Accents */}
           {emotion === Emotion.SAVAGE && (
             <g transform="translate(40, 100)" className="z-20 text-black">
@@ -88,15 +87,15 @@ const Cattu: React.FC<CattuProps> = ({ emotion, isTalking, isLoading, size = 'lg
               <circle cx="65" cy="120" r="16" fill="currentColor" className="text-current transition-colors duration-500" />
               <circle cx="135" cy="120" r="16" fill="currentColor" className="text-current transition-colors duration-500" />
               
-              {/* Pupils with specific ANGRY flicker */}
+              {/* Pupils with ANGRY flicker */}
               <circle 
                 cx="67" cy="116" r="6" 
-                fill={emotion === Emotion.ANGRY ? '#ef4444' : 'black'} 
+                fill={emotion === Emotion.ANGRY ? '#ff0000' : 'black'} 
                 className={emotion === Emotion.ANGRY ? 'animate-eye-flicker' : 'transition-colors duration-500'} 
               />
               <circle 
                 cx="137" cy="116" r="6" 
-                fill={emotion === Emotion.ANGRY ? '#ef4444' : 'black'} 
+                fill={emotion === Emotion.ANGRY ? '#ff0000' : 'black'} 
                 className={emotion === Emotion.ANGRY ? 'animate-eye-flicker' : 'transition-colors duration-500'} 
               />
             </g>
@@ -114,8 +113,8 @@ const Cattu: React.FC<CattuProps> = ({ emotion, isTalking, isLoading, size = 'lg
       </div>
       
       {/* Background Glow */}
-      <div className={`absolute -z-10 w-[150%] h-[150%] rounded-full blur-[120px] transition-all duration-1000
-        ${emotion === Emotion.ANGRY ? 'bg-toxicRed opacity-40' : emotion === Emotion.SAVAGE ? 'bg-streetCyan opacity-20' : 'bg-white opacity-10'}`} 
+      <div className={`absolute -z-10 w-[150%] h-[150%] rounded-full blur-[100px] transition-all duration-1000
+        ${emotion === Emotion.ANGRY ? 'bg-toxicRed opacity-30' : emotion === Emotion.SAVAGE ? 'bg-streetCyan opacity-15' : 'bg-white opacity-5'}`} 
       />
     </div>
   );
