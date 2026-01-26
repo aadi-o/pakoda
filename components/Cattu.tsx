@@ -23,9 +23,6 @@ const Cattu: React.FC<CattuProps> = ({ emotion, isTalking, size = 'lg' }) => {
     }
   }, [emotion]);
 
-  // Generates a lifelike random duration for the blink cycle between 4s and 6s
-  const blinkDuration = useMemo(() => (4 + Math.random() * 2).toFixed(2) + 's', []);
-
   return (
     <div className={`${sizeClasses[size]} flex items-center justify-center relative select-none animate-soft-float`}>
       <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-sm transition-transform duration-500">
@@ -101,11 +98,7 @@ const Cattu: React.FC<CattuProps> = ({ emotion, isTalking, size = 'lg' }) => {
               {/* Eyes Group - Attentive Focus with Darting Pupils */}
               <g 
                 className="animate-eye-blink" 
-                style={{ 
-                  transformOrigin: 'center', 
-                  transformBox: 'fill-box',
-                  animationDuration: blinkDuration 
-                } as any}
+                style={{ transformOrigin: 'center', transformBox: 'fill-box' } as any}
               >
                 {/* Left Eye */}
                 <g transform="translate(65, 110)">

@@ -29,6 +29,8 @@ export const sendMessageToGemini = async (
     });
 
     const responseText = response.text || "";
+    
+    // Updated Regex to catch [EMOTION] [IQ: +/-X]
     const emotionRegex = /\[(NEUTRAL|ANNOYED|CONFIDENT|SAVAGE|ANGRY)\]/i;
     const iqRegex = /\[IQ:\s*([+-]?\d+)\]/i;
 
@@ -68,15 +70,13 @@ export const sendMessageToGemini = async (
 export const generateSpeech = async (text: string, emotion: Emotion): Promise<string | undefined> => {
   try {
     const ai = getAI();
-    // Adjusted prompt for natural speed and street-smart confidence
-    const prompt = `Speak this with confidence, natural speed, and a street-smart attitude. No robotic pauses. Text: ${text}`;
+    const prompt = `Speak this with pure street-smart attitude. Speed: Fast. Tone: Aggressive but composed. Text: ${text}`;
     
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-preview-tts",
       contents: [{ parts: [{ text: prompt }] }],
       config: {
         responseModalities: [Modality.AUDIO],
-        thinkingConfig: { thinkingBudget: 0 },
         speechConfig: {
           voiceConfig: {
             prebuiltVoiceConfig: { voiceName: 'Puck' },
@@ -87,7 +87,6 @@ export const generateSpeech = async (text: string, emotion: Emotion): Promise<st
 
     return response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
   } catch (error) {
-    console.error("TTS Error:", error);
     return undefined;
   }
 };
