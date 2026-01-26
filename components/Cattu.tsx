@@ -43,7 +43,7 @@ const Cattu: React.FC<CattuProps> = ({ emotion, isTalking, isLoading, size = 'lg
     switch (emotion) {
       case Emotion.ANGRY: return "animate-shake";
       case Emotion.SAVAGE: return "animate-bounce";
-      case Emotion.ANNOYED: return "opacity-80 scale-95";
+      case Emotion.ANNOYED: return "opacity-80 scale-95 transition-transform duration-500";
       default: return "animate-pulse";
     }
   }, [emotion]);
@@ -66,46 +66,56 @@ const Cattu: React.FC<CattuProps> = ({ emotion, isTalking, isLoading, size = 'lg
           <path 
             d="M 45 60 Q 100 40, 155 60 Q 185 75, 185 125 L 185 175 Q 160 215, 100 215 Q 40 215, 15 175 L 15 125 Q 15 75, 45 60" 
             fill="currentColor" 
-            className={`${emotion === Emotion.ANGRY ? 'text-toxicRed' : emotion === Emotion.SAVAGE ? 'text-streetCyan' : 'text-white'} opacity-10`}
+            className={`${emotion === Emotion.ANGRY ? 'text-toxicRed' : emotion === Emotion.SAVAGE ? 'text-streetCyan' : 'text-white'} opacity-10 transition-colors duration-500`}
           />
           <path 
             d="M 45 60 Q 100 40, 155 60 Q 185 75, 185 125 L 185 175 Q 160 215, 100 215 Q 40 215, 15 175 L 15 125 Q 15 75, 45 60" 
             fill="none" 
             stroke="currentColor" 
             strokeWidth="12"
-            className={`${emotion === Emotion.ANGRY ? 'text-toxicRed' : emotion === Emotion.SAVAGE ? 'text-streetCyan' : 'text-white'}`}
+            className={`${emotion === Emotion.ANGRY ? 'text-toxicRed' : emotion === Emotion.SAVAGE ? 'text-streetCyan' : 'text-white'} transition-colors duration-500`}
           />
 
           {/* Ears */}
           <g className={activeAction === 'ear-twitch' ? 'animate-ear-twitch-once' : ''}>
-            <path d="M 45 60 L 25 10 Q 55 -5, 80 30" fill="currentColor" className="text-current" />
-            <path d="M 120 55 L 135 10 Q 165 -5, 175 60" fill="currentColor" className="text-current" />
+            <path d="M 45 60 L 25 10 Q 55 -5, 80 30" fill="currentColor" className="text-current transition-colors duration-500" />
+            <path d="M 120 55 L 135 10 Q 165 -5, 175 60" fill="currentColor" className="text-current transition-colors duration-500" />
           </g>
 
           {/* Eyes */}
           {activeAction !== 'blink' && (
             <g className={`${isTalking ? 'animate-pulse' : ''}`}>
-              <circle cx="65" cy="120" r="16" fill="currentColor" className="text-current" />
-              <circle cx="135" cy="120" r="16" fill="currentColor" className="text-current" />
-              <circle cx="67" cy="116" r="6" fill={emotion === Emotion.ANGRY ? 'red' : 'black'} />
-              <circle cx="137" cy="116" r="6" fill={emotion === Emotion.ANGRY ? 'red' : 'black'} />
+              <circle cx="65" cy="120" r="16" fill="currentColor" className="text-current transition-colors duration-500" />
+              <circle cx="135" cy="120" r="16" fill="currentColor" className="text-current transition-colors duration-500" />
+              
+              {/* Pupils with specific ANGRY flicker */}
+              <circle 
+                cx="67" cy="116" r="6" 
+                fill={emotion === Emotion.ANGRY ? '#ef4444' : 'black'} 
+                className={emotion === Emotion.ANGRY ? 'animate-eye-flicker' : 'transition-colors duration-500'} 
+              />
+              <circle 
+                cx="137" cy="116" r="6" 
+                fill={emotion === Emotion.ANGRY ? '#ef4444' : 'black'} 
+                className={emotion === Emotion.ANGRY ? 'animate-eye-flicker' : 'transition-colors duration-500'} 
+              />
             </g>
           )}
 
           {/* Mouth */}
           <g transform="translate(100, 170)">
             {isTalking ? (
-              <path d="M -20 0 Q 0 20 20 0" stroke="currentColor" strokeWidth="10" fill="none" strokeLinecap="round" />
+              <path d="M -20 0 Q 0 20 20 0" stroke="currentColor" strokeWidth="10" fill="none" strokeLinecap="round" className="transition-colors duration-500" />
             ) : (
-              <path d="M -15 5 L 15 5" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
+              <path d="M -15 5 L 15 5" stroke="currentColor" strokeWidth="8" strokeLinecap="round" className="transition-colors duration-500" />
             )}
           </g>
         </svg>
       </div>
       
       {/* Background Glow */}
-      <div className={`absolute -z-10 w-[150%] h-[150%] rounded-full blur-[120px] opacity-20 transition-all duration-1000
-        ${emotion === Emotion.ANGRY ? 'bg-toxicRed' : emotion === Emotion.SAVAGE ? 'bg-streetCyan' : 'bg-white'}`} 
+      <div className={`absolute -z-10 w-[150%] h-[150%] rounded-full blur-[120px] transition-all duration-1000
+        ${emotion === Emotion.ANGRY ? 'bg-toxicRed opacity-40' : emotion === Emotion.SAVAGE ? 'bg-streetCyan opacity-20' : 'bg-white opacity-10'}`} 
       />
     </div>
   );

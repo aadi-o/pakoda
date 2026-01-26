@@ -21,7 +21,7 @@ interface BurnMeterProps {
 
 const BurnMeter = ({ level, horizontal, className = '' }: BurnMeterProps) => (
   <div className={`flex ${horizontal ? 'flex-row items-center gap-2' : 'flex-col items-center gap-2'} group ${className}`}>
-    <div className={`${horizontal ? 'w-24 h-2' : 'h-32 lg:h-48 w-4'} bg-zinc-900 rounded-full overflow-hidden border border-white/10 relative`}>
+    <div className={`${horizontal ? 'w-20 h-2' : 'h-24 lg:h-48 w-4'} bg-zinc-900 rounded-full overflow-hidden border border-white/10 relative`}>
       <div 
         className={`absolute bottom-0 ${horizontal ? 'left-0 h-full' : 'w-full'} burn-meter-gradient transition-all duration-1000 ease-out`}
         style={horizontal ? { width: `${level}%` } : { height: `${level}%` }}
@@ -124,35 +124,39 @@ const App: React.FC = () => {
 
   if (!userName) {
     return (
-      <div className="h-full flex flex-col items-center justify-center bg-obsidian p-6 street-texture overflow-hidden">
-        <div className="absolute top-0 w-full overflow-hidden bg-neonYellow text-black py-2 font-black text-[10px] md:text-xs z-10">
+      <div className="h-screen w-full flex flex-col items-center justify-center bg-obsidian p-6 street-texture overflow-hidden relative">
+        <div className="absolute top-0 w-full overflow-hidden bg-neonYellow text-black py-2 font-black text-[10px] md:text-xs z-10 shadow-lg">
           <div className="animate-marquee whitespace-nowrap">
             {STREET_NEWS.join(" • ")}
           </div>
         </div>
-        <Cattu size="md" emotion={Emotion.NEUTRAL} isTalking={false} isLoading={false} />
-        <div className="w-full max-w-sm mt-8 space-y-4">
-          <input 
-            type="text" 
-            value={tempName} 
-            onChange={e => setTempName(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && submitName()}
-            placeholder="KAUN HAI BE TU?" 
-            className="w-full bg-zinc-900/50 border-2 border-white/5 p-4 md:p-5 text-lg md:text-xl font-bold text-center outline-none focus:border-neonYellow transition-all uppercase rounded-2xl"
-          />
-          <button onClick={submitName} className="w-full py-4 md:py-5 bg-neonYellow text-black font-black uppercase tracking-tighter hover:scale-[1.02] active:scale-95 transition-all rounded-2xl">
-            ENTRY MAARO
-          </button>
+        <div className="flex flex-col items-center z-10 w-full">
+          <div className="scale-75 md:scale-100">
+            <Cattu size="md" emotion={Emotion.NEUTRAL} isTalking={false} isLoading={false} />
+          </div>
+          <div className="w-full max-w-xs md:max-w-sm mt-8 space-y-4">
+            <input 
+              type="text" 
+              value={tempName} 
+              onChange={e => setTempName(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && submitName()}
+              placeholder="KAUN HAI BE TU?" 
+              className="w-full bg-zinc-900 border-2 border-white/10 p-4 md:p-5 text-lg md:text-xl font-bold text-center outline-none focus:border-neonYellow transition-all uppercase rounded-2xl text-white placeholder:text-zinc-700"
+            />
+            <button onClick={submitName} className="w-full py-4 md:py-5 bg-neonYellow text-black font-black uppercase tracking-tighter hover:bg-white active:scale-95 transition-all rounded-2xl shadow-[0_0_20px_rgba(234,179,8,0.3)]">
+              ENTRY MAARO
+            </button>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={`h-full flex flex-col lg:flex-row bg-obsidian text-white street-texture selection:bg-neonYellow selection:text-black overflow-hidden ${currentEmotion === Emotion.ANGRY ? 'animate-glitch-screen' : ''}`}>
+    <div className={`h-full w-full flex flex-col lg:flex-row bg-obsidian text-white street-texture selection:bg-neonYellow selection:text-black overflow-hidden ${currentEmotion === Emotion.ANGRY ? 'animate-glitch-screen' : ''}`}>
       
       {/* MOBILE HEADER / DESKTOP SIDEBAR STATS */}
-      <aside className="w-full lg:w-20 xl:w-32 flex flex-row lg:flex-col items-center justify-between px-4 py-3 lg:py-10 border-b lg:border-b-0 lg:border-r border-white/5 bg-zinc-950/50 z-20">
+      <aside className="w-full lg:w-20 xl:w-32 flex flex-row lg:flex-col items-center justify-between px-4 py-3 lg:py-10 border-b lg:border-b-0 lg:border-r border-white/5 bg-zinc-950/80 z-20 backdrop-blur-md">
         <div className="flex flex-row lg:flex-col items-center gap-4 lg:gap-8">
           <div className="hidden lg:block lg:rotate-90 text-[10px] font-black tracking-[0.5em] uppercase opacity-20 whitespace-nowrap lg:mb-8">PAKODA_v2.0</div>
           <div className="lg:hidden text-[10px] font-black tracking-widest uppercase opacity-40">PAKODA</div>
@@ -163,7 +167,7 @@ const App: React.FC = () => {
         <div className="flex flex-row lg:flex-col gap-2 lg:gap-4 items-center">
           <div className="flex flex-row lg:flex-col gap-1.5 lg:gap-3">
             {Array.from({length: 5}).map((_, i) => (
-              <div key={i} className={`w-2 h-2 lg:w-3 lg:h-3 rounded-full border border-white/20 transition-all ${i < chaiLevel ? 'bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.6)]' : 'bg-transparent'}`} />
+              <div key={i} className={`w-2 h-2 lg:w-3 lg:h-3 rounded-full border border-white/20 transition-all ${i < chaiLevel ? 'bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.8)]' : 'bg-transparent'}`} />
             ))}
           </div>
           <span className="text-[8px] lg:text-[10px] font-bold text-center uppercase opacity-30">Chai</span>
@@ -171,40 +175,40 @@ const App: React.FC = () => {
       </aside>
 
       {/* MAIN CHAT AREA */}
-      <main className="flex-1 flex flex-col relative h-full min-h-0 overflow-hidden">
+      <main className="flex-1 flex flex-col relative h-full min-h-0 overflow-hidden bg-black/20">
         {/* TOP MARQUEE */}
-        <div className="w-full overflow-hidden bg-white/5 text-white/40 py-1.5 md:py-2 border-b border-white/5 font-bold text-[8px] md:text-[10px] shrink-0">
+        <div className="w-full overflow-hidden bg-white/5 text-white/50 py-1.5 md:py-2 border-b border-white/5 font-bold text-[8px] md:text-[10px] shrink-0">
           <div className="animate-marquee whitespace-nowrap">
             {STREET_NEWS.join(" • ")}
           </div>
         </div>
 
-        <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 md:px-12 lg:px-20 py-6 md:py-10 space-y-8 md:space-y-10 scrollbar-hide">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 md:px-12 lg:px-20 py-6 md:py-10 space-y-8 md:space-y-10 scrollbar-hide scroll-smooth">
           {messages.length === 0 && (
-            <div className="h-full flex flex-col items-center justify-center text-center opacity-40">
-              <div className="scale-75 md:scale-100">
+            <div className="h-full flex flex-col items-center justify-center text-center opacity-60">
+              <div className="scale-75 md:scale-100 opacity-30">
                 <Cattu size="md" emotion={currentEmotion} isTalking={isSpeaking} isLoading={loading} />
               </div>
-              <h1 className="text-2xl md:text-5xl lg:text-6xl font-black mt-4 md:mt-8 tracking-tighter italic uppercase">Abey bol na!</h1>
-              <p className="text-[10px] font-bold tracking-[0.2em] mt-2">WAITING FOR YOUR NONSENSE...</p>
+              <h1 className="text-2xl md:text-5xl lg:text-6xl font-black mt-4 md:mt-8 tracking-tighter italic uppercase text-zinc-600">Abey bol na!</h1>
+              <p className="text-[10px] font-bold tracking-[0.2em] mt-2 text-zinc-700">WAITING FOR YOUR NONSENSE...</p>
             </div>
           )}
 
           {messages.map((m, i) => (
             <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-slide-up`}>
-              <div className={`max-w-[90%] md:max-w-[70%] lg:max-w-[60%] ${m.role === 'user' ? 'bg-zinc-900/60 p-4 md:p-5 rounded-2xl rounded-tr-none border border-white/5 shadow-xl' : 'p-2'}`}>
-                <div className="text-[8px] md:text-[10px] font-black opacity-20 mb-1 uppercase tracking-widest flex items-center gap-2">
+              <div className={`max-w-[90%] md:max-w-[70%] lg:max-w-[60%] ${m.role === 'user' ? 'bg-zinc-900/80 p-4 md:p-5 rounded-2xl rounded-tr-none border border-white/5 shadow-2xl backdrop-blur-sm' : 'p-2'}`}>
+                <div className="text-[8px] md:text-[10px] font-black opacity-30 mb-1 uppercase tracking-widest flex items-center gap-2">
                   {m.role === 'user' ? userName : 'PAKODA'}
                   {m.role === 'model' && <span className={`w-1 h-1 rounded-full ${m.emotion === Emotion.ANGRY ? 'bg-toxicRed' : m.emotion === Emotion.SAVAGE ? 'bg-streetCyan' : 'bg-white'}`} />}
                 </div>
-                <div className={`text-sm md:text-xl lg:text-2xl font-bold leading-tight ${m.role === 'user' ? 'text-white/80' : (m.emotion === Emotion.SAVAGE ? 'text-streetCyan' : m.emotion === Emotion.ANGRY ? 'text-toxicRed' : 'text-white')}`}>
+                <div className={`text-sm md:text-xl lg:text-2xl font-bold leading-tight ${m.role === 'user' ? 'text-zinc-100' : (m.emotion === Emotion.SAVAGE ? 'text-streetCyan' : m.emotion === Emotion.ANGRY ? 'text-toxicRed' : 'text-white')}`}>
                   {m.text}
                 </div>
               </div>
             </div>
           ))}
           {loading && (
-            <div className="flex items-center gap-2 animate-pulse text-[10px] font-bold uppercase opacity-30 pl-4">
+            <div className="flex items-center gap-2 animate-pulse text-[10px] font-bold uppercase opacity-40 pl-4">
               <span className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" />
               <span>JUDGING YOUR AUKAT...</span>
             </div>
@@ -212,7 +216,7 @@ const App: React.FC = () => {
         </div>
 
         {/* INPUT AREA */}
-        <div className="p-4 md:p-6 lg:p-10 shrink-0 bg-gradient-to-t from-obsidian via-obsidian/95 to-transparent">
+        <div className="p-4 md:p-6 lg:p-10 shrink-0 bg-gradient-to-t from-obsidian via-obsidian/95 to-transparent backdrop-blur-sm">
           <div className="max-w-4xl mx-auto space-y-4">
             {/* Quick Actions - Scrollable row on mobile */}
             <div className="flex gap-2 overflow-x-auto scrollbar-hide py-1 mask-fade-edges">
@@ -221,7 +225,7 @@ const App: React.FC = () => {
                   key={btn}
                   onClick={() => handleSend(btn)}
                   disabled={loading || chaiLevel <= 0}
-                  className="px-3 md:px-4 py-2 bg-zinc-900 border border-white/5 rounded-full text-[8px] md:text-[10px] font-bold uppercase hover:bg-white hover:text-black transition-all whitespace-nowrap disabled:opacity-20 shrink-0"
+                  className="px-3 md:px-4 py-2 bg-zinc-900 border border-white/10 rounded-full text-[8px] md:text-[10px] font-bold uppercase hover:bg-white hover:text-black transition-all whitespace-nowrap disabled:opacity-20 shrink-0 text-zinc-400"
                 >
                   {btn}
                 </button>
@@ -232,23 +236,23 @@ const App: React.FC = () => {
               {showBegButton ? (
                 <button 
                   onClick={begForChai}
-                  className="w-full p-5 md:p-6 bg-toxicRed text-black font-black uppercase text-base md:text-xl rounded-2xl animate-shake shadow-2xl active:scale-95 transition-transform"
+                  className="w-full p-5 md:p-6 bg-toxicRed text-black font-black uppercase text-base md:text-xl rounded-2xl animate-shake shadow-[0_0_30px_rgba(239,68,68,0.4)] active:scale-95 transition-transform"
                 >
                   CHAI KHATAM. MAAFI MAANGO! 🙏
                 </button>
               ) : (
-                <div className="flex items-center bg-zinc-900/90 border-2 border-white/5 rounded-2xl md:rounded-3xl p-1.5 md:p-2 pl-4 md:pl-6 focus-within:border-neonYellow transition-all shadow-2xl">
+                <div className="flex items-center bg-zinc-900/90 border-2 border-white/10 rounded-2xl md:rounded-3xl p-1.5 md:p-2 pl-4 md:pl-6 focus-within:border-neonYellow transition-all shadow-2xl">
                   <input 
                     value={input}
                     onChange={e => setInput(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleSend()}
                     placeholder="Bakwaas karo..."
-                    className="flex-1 bg-transparent border-none outline-none text-base md:text-xl font-bold py-3 md:py-4 placeholder:opacity-20 min-w-0"
+                    className="flex-1 bg-transparent border-none outline-none text-base md:text-xl font-bold py-3 md:py-4 placeholder:opacity-20 min-w-0 text-white"
                   />
                   <button 
                     onClick={() => handleSend()}
                     disabled={loading || !input.trim()}
-                    className="p-3 md:p-5 bg-white text-black rounded-xl md:rounded-2xl hover:scale-105 active:scale-90 transition-all disabled:opacity-10 shrink-0"
+                    className="p-3 md:p-5 bg-white text-black rounded-xl md:rounded-2xl hover:bg-neonYellow active:scale-90 transition-all disabled:opacity-10 shrink-0 shadow-lg"
                     aria-label="Send"
                   >
                     <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
@@ -261,27 +265,27 @@ const App: React.FC = () => {
       </main>
 
       {/* CHARACTER PANEL (Desktop Only) */}
-      <aside className="hidden xl:flex w-80 2xl:w-96 flex-col border-l border-white/5 bg-zinc-950/30 items-center justify-center p-8 2xl:p-12 relative overflow-hidden">
+      <aside className="hidden xl:flex w-80 2xl:w-96 flex-col border-l border-white/5 bg-zinc-950/40 items-center justify-center p-8 2xl:p-12 relative overflow-hidden backdrop-blur-lg">
         <div className="relative z-10 w-full flex flex-col items-center">
           <Cattu size="lg" emotion={currentEmotion} isTalking={isSpeaking} isLoading={loading} />
           <div className="mt-8 text-center">
-            <h2 className={`text-2xl 2xl:text-3xl font-black italic tracking-tighter uppercase ${currentEmotion === Emotion.SAVAGE ? 'text-streetCyan' : currentEmotion === Emotion.ANGRY ? 'text-toxicRed' : 'text-white'}`}>
+            <h2 className={`text-2xl 2xl:text-3xl font-black italic tracking-tighter uppercase transition-colors duration-500 ${currentEmotion === Emotion.SAVAGE ? 'text-streetCyan' : currentEmotion === Emotion.ANGRY ? 'text-toxicRed' : 'text-white'}`}>
               {currentEmotion}
             </h2>
-            <div className="h-px w-12 bg-white/20 mx-auto my-3" />
-            <p className="text-[9px] 2xl:text-[10px] uppercase font-bold opacity-30 tracking-[0.3em]">Mode: Street Savage</p>
+            <div className="h-px w-12 bg-white/10 mx-auto my-3" />
+            <p className="text-[9px] 2xl:text-[10px] uppercase font-bold opacity-20 tracking-[0.3em]">Mode: Street Savage</p>
           </div>
         </div>
         
         <button 
           onClick={() => {localStorage.clear(); window.location.reload();}}
-          className="mt-auto relative z-10 text-[10px] font-bold uppercase opacity-10 hover:opacity-100 hover:text-toxicRed transition-all p-4"
+          className="mt-auto relative z-10 text-[10px] font-bold uppercase opacity-5 hover:opacity-100 hover:text-toxicRed transition-all p-4"
         >
           Reset Existence
         </button>
 
         {/* Decor */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[150px] font-black opacity-[0.02] pointer-events-none select-none -rotate-12">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[150px] font-black opacity-[0.01] pointer-events-none select-none -rotate-12">
           PAKODA
         </div>
       </aside>
