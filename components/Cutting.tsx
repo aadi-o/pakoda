@@ -7,13 +7,11 @@ interface CuttingProps {
 }
 
 const Cutting: React.FC<CuttingProps> = ({ isVisible, comment }) => {
-  if (!isVisible && !comment) return null;
-
   return (
     <div 
-      className={`absolute bottom-full left-0 mb-4 transition-all duration-500 ${isVisible ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-10 opacity-0 scale-50 pointer-events-none'}`}
+      className={`absolute bottom-full left-0 mb-4 transition-all duration-300 ${isVisible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
     >
-      <div className="relative flex flex-col items-center">
+      <div className={`relative flex flex-col items-center ${isVisible ? 'animate-steam-burst' : ''}`}>
         {/* Hype Man Glass - Cutting */}
         <div className="w-20 h-24 relative animate-soft-float">
           {/* Steam lines */}
@@ -59,8 +57,10 @@ const Cutting: React.FC<CuttingProps> = ({ isVisible, comment }) => {
           <div className="absolute -right-4 top-1/3 w-2 h-1 bg-slateInk/20 rounded-full"></div>
         </div>
         
-        {/* Shout Box */}
-        <div className="mt-4 bg-slateInk text-white p-4 rounded-3xl rounded-tl-none border-[3px] border-slateInk shadow-[6px_6px_0px_#E57373] text-[10px] font-black uppercase tracking-tighter w-40 text-center animate-reveal">
+        {/* Shout Box - Delayed until after burst */}
+        <div 
+          className={`mt-4 bg-slateInk text-white p-4 rounded-3xl rounded-tl-none border-[3px] border-slateInk shadow-[6px_6px_0px_#E57373] text-[10px] font-black uppercase tracking-tighter w-40 text-center transition-all duration-300 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+        >
           <span className="text-mutedRose block text-[8px] mb-1">Cutting Hype:</span>
           "{comment}"
           <div className="absolute top-[-8px] left-0 w-4 h-4 bg-slateInk border-t-[3px] border-l-[3px] border-slateInk rotate-45 -z-10"></div>

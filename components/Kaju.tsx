@@ -7,13 +7,11 @@ interface KajuProps {
 }
 
 const Kaju: React.FC<KajuProps> = ({ isVisible, comment }) => {
-  if (!isVisible && !comment) return null;
-
   return (
     <div 
-      className={`absolute top-12 right-12 z-50 transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 -translate-y-10 scale-90 pointer-events-none'}`}
+      className={`absolute top-12 right-12 z-50 transition-all duration-300 ${isVisible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
     >
-      <div className="flex flex-col items-center">
+      <div className={`flex flex-col items-center ${isVisible ? 'animate-divine-descent' : ''}`}>
         {/* Kaju Sprite */}
         <div className="w-20 h-24 animate-soft-float">
           <svg viewBox="0 0 100 120" className="w-full h-full drop-shadow-[0_0_15px_rgba(147,197,253,0.3)]">
@@ -58,8 +56,10 @@ const Kaju: React.FC<KajuProps> = ({ isVisible, comment }) => {
           </svg>
         </div>
 
-        {/* Serene Speech Bubble */}
-        <div className="mt-2 bg-blue-50/90 backdrop-blur-sm border-2 border-blue-100 p-4 rounded-[2rem] rounded-tr-none shadow-sm text-[10px] font-medium italic text-blue-900/70 w-44 text-center animate-reveal">
+        {/* Serene Speech Bubble - Delayed until after descent */}
+        <div 
+          className={`mt-2 bg-blue-50/90 backdrop-blur-sm border-2 border-blue-100 p-4 rounded-[2rem] rounded-tr-none shadow-sm text-[10px] font-medium italic text-blue-900/70 w-44 text-center transition-all duration-500 delay-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
+        >
           <span className="text-blue-400 not-italic font-black block text-[8px] mb-1 uppercase tracking-widest">Kaju Spirit:</span>
           "{comment}"
           <div className="absolute top-[-8px] right-0 w-4 h-4 bg-blue-50/90 border-t-2 border-r-2 border-blue-100 rotate-45 -z-10"></div>

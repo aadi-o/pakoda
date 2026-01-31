@@ -7,15 +7,13 @@ interface MasalaProps {
 }
 
 const Masala: React.FC<MasalaProps> = ({ isVisible, comment }) => {
-  if (!isVisible && !comment) return null;
-
   return (
     <div 
-      className={`absolute bottom-full right-0 mb-4 transition-opacity duration-300 ${isVisible ? 'animate-pop-bounce opacity-100' : 'opacity-0 pointer-events-none'}`}
+      className={`absolute bottom-full right-0 mb-4 transition-all duration-300 ${isVisible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
     >
-      <div className="relative group">
+      <div className={`relative group ${isVisible ? 'animate-spice-whirl' : ''}`}>
         {/* Masala Sprite */}
-        <div className="w-16 h-16 animate-bounce-subtle">
+        <div className="w-16 h-16 animate-soft-float">
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-md">
             <defs>
               <radialGradient id="masalaGlow">
@@ -41,8 +39,10 @@ const Masala: React.FC<MasalaProps> = ({ isVisible, comment }) => {
           </svg>
         </div>
         
-        {/* Speech Bubble */}
-        <div className="absolute right-full bottom-full mb-2 mr-2 w-36 bg-paper border border-slateInk/10 p-3 rounded-2xl rounded-br-none shadow-xl text-[10px] font-bold uppercase tracking-wider text-slateInk animate-reveal">
+        {/* Speech Bubble - Delayed until after spin */}
+        <div 
+          className={`absolute right-full bottom-full mb-2 mr-2 w-36 bg-paper border border-slateInk/10 p-3 rounded-2xl rounded-br-none shadow-xl text-[10px] font-bold uppercase tracking-wider text-slateInk transition-all duration-300 delay-700 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'}`}
+        >
           <span className="text-mutedRose block mb-1">Masala:</span>
           {comment}
           <div className="absolute bottom-[-6px] right-0 w-3 h-3 bg-paper border-r border-b border-slateInk/10 rotate-45"></div>

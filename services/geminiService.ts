@@ -1,7 +1,7 @@
 
 import { GoogleGenAI, Modality } from "@google/genai";
 import { SYSTEM_INSTRUCTION } from "../constants";
-import { Emotion, GeminiResponse, RoastIntensity } from "../types";
+import { Emotion, GeminiResponse, RoastIntensity, Interjection } from "../types";
 
 const getAI = () => {
   return new GoogleGenAI({ apiKey: process.env.API_KEY });
@@ -23,19 +23,20 @@ export const sendMessageToGemini = async (
         systemInstruction: SYSTEM_INSTRUCTION,
         temperature: 1.0, 
         topP: 0.95,
-        maxOutputTokens: 150,
+        maxOutputTokens: 250,
         thinkingConfig: { thinkingBudget: 0 }
       },
     });
 
     const responseText = response.text || "";
     
-    // Updated Regex to catch [EMOTION] [IQ: +/-X]
     const emotionRegex = /\[(NEUTRAL|ANNOYED|CONFIDENT|SAVAGE|ANGRY)\]/i;
     const iqRegex = /\[IQ:\s*([+-]?\d+)\]/i;
+    const sidekickRegex = /\[SIDEKICK:\s*(MASALA|BUN|CUTTING|KAJU)\s*\|\s*([^\]]+)\]/i;
 
     let emotion = Emotion.NEUTRAL;
     let iqAdjustment = 0;
+    let interjection: Interjection | undefined = undefined;
     let cleanText = responseText;
 
     const emotionMatch = responseText.match(emotionRegex);
@@ -51,10 +52,23 @@ export const sendMessageToGemini = async (
       cleanText = cleanText.replace(iqRegex, '').trim();
     }
 
+    const sidekickMatch = responseText.match(sidekickRegex);
+    if (sidekickMatch) {
+      interjection = {
+        character: sidekickMatch[1].toLowerCase() as any,
+        content: sidekickMatch[2].trim()
+      };
+      cleanText = cleanText.replace(sidekickRegex, '').trim();
+    }
+
+    // Final cleanup of any remaining bracket artifacts
+    cleanText = cleanText.replace(/\[[^\]]*\]/g, '').trim();
+
     return {
       text: cleanText,
       emotion: emotion,
-      iqAdjustment: iqAdjustment
+      iqAdjustment: iqAdjustment,
+      interjection: interjection
     };
 
   } catch (error) {

@@ -7,13 +7,11 @@ interface BunProps {
 }
 
 const Bun: React.FC<BunProps> = ({ isVisible, comment }) => {
-  if (!isVisible && !comment) return null;
-
   return (
     <div 
-      className={`absolute bottom-full left-12 mb-8 transition-all duration-700 ${isVisible ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-20 opacity-0 scale-75 pointer-events-none'}`}
+      className={`absolute bottom-full left-12 mb-8 transition-all duration-300 ${isVisible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
     >
-      <div className="relative group flex flex-col items-center">
+      <div className={`relative group flex flex-col items-center ${isVisible ? 'animate-maska-slide' : ''}`}>
         {/* Bun Sprite */}
         <div className="w-24 h-20 animate-soft-float">
           <svg viewBox="0 0 120 100" className="w-full h-full drop-shadow-lg">
@@ -59,8 +57,10 @@ const Bun: React.FC<BunProps> = ({ isVisible, comment }) => {
           </svg>
         </div>
         
-        {/* Soft Speech Bubble */}
-        <div className="mt-4 bg-[#FFF9DB] border-[3px] border-slateInk/20 p-5 rounded-[2rem] rounded-bl-none shadow-[6px_6px_0px_rgba(250,176,5,0.1)] text-[11px] font-bold italic text-slateInk/80 w-48 text-center animate-reveal">
+        {/* Soft Speech Bubble - Delayed until after slide */}
+        <div 
+          className={`mt-4 bg-[#FFF9DB] border-[3px] border-slateInk/20 p-5 rounded-[2rem] rounded-bl-none shadow-[6px_6px_0px_rgba(250,176,5,0.1)] text-[11px] font-bold italic text-slateInk/80 w-48 text-center transition-all duration-300 delay-600 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+        >
           <span className="text-[#FAB005] not-italic font-black block text-[9px] mb-1 uppercase tracking-widest">Bun Maska:</span>
           "{comment}"
           <div className="absolute bottom-[-10px] left-0 w-5 h-5 bg-[#FFF9DB] border-l-[3px] border-b-[3px] border-slateInk/20 -z-10 rotate-[-15deg]"></div>
